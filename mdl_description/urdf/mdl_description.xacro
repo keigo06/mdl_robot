@@ -21,7 +21,7 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://mdl_description/meshes/Link_1.dae" />
+          <mesh filename="package://mdl_description/meshes/Link_1.STL" />
         </geometry>
         <material name="red">
           <color rgba="1.0 0.0 0.0 2.0"/>
@@ -33,7 +33,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://mdl_description/meshes/Link_1.dae" />
+            filename="package://mdl_description/meshes/Link_1.STL" />
         </geometry>
       </collision>
     </link>
@@ -59,7 +59,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://mdl_description/meshes/Link_2.dae" />
+            filename="package://mdl_description/meshes/Link_2.STL" />
         </geometry>
         <material name="red">
           <color rgba="1.0 0.0 0.0 2.0"/>
@@ -71,7 +71,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://mdl_description/meshes/Link_2.dae" />
+            filename="package://mdl_description/meshes/Link_2.STL" />
         </geometry>
       </collision>
     </link>
@@ -110,7 +110,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://mdl_description/meshes/Link_3.dae" />
+            filename="package://mdl_description/meshes/Link_3.STL" />
         </geometry>
         <material name="red">
           <color rgba="1.0 0.0 0.0 2.0"/>
@@ -122,7 +122,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://mdl_description/meshes/Link_3.dae" />
+            filename="package://mdl_description/meshes/Link_3.STL" />
         </geometry>
       </collision>
     </link>
@@ -131,7 +131,7 @@
       type="continuous">
       <origin
         xyz="0 0 0.1"
-        rpy="1.5708 -1.5708 0" />
+        rpy="-1.5708 -1.5708 0" />
       <parent
         link="Link_2" />
       <child
@@ -161,7 +161,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://mdl_description/meshes/Link_4.dae" />
+            filename="package://mdl_description/meshes/Link_4.STL" />
         </geometry>
         <material name="red">
           <color rgba="1.0 0.0 0.0 2.0"/>
@@ -173,7 +173,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://mdl_description/meshes/Link_4.dae" />
+            filename="package://mdl_description/meshes/Link_4.STL" />
         </geometry>
       </collision>
     </link>
@@ -188,7 +188,7 @@
       <child
         link="Link_4" />
       <axis
-        xyz="0 0 -1" />
+        xyz="0 0 1" />
     </joint>
     <link
       name="Link_5">
@@ -212,7 +212,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://mdl_description/meshes/Link_5.dae" />
+            filename="package://mdl_description/meshes/Link_5.STL" />
         </geometry>
         <material name="red">
           <color rgba="1.0 0.0 0.0 2.0"/>
@@ -224,7 +224,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://mdl_description/meshes/Link_5.dae" />
+            filename="package://mdl_description/meshes/Link_5.STL" />
         </geometry>
       </collision>
     </link>
@@ -239,7 +239,7 @@
       <child
         link="Link_5" />
       <axis
-        xyz="0 0 -1" />
+        xyz="0 0 1" />
     </joint>
     <link
       name="Link_6">
@@ -263,7 +263,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://mdl_description/meshes/Link_6.dae" />
+            filename="package://mdl_description/meshes/Link_6.STL" />
         </geometry>
         <material name="red">
           <color rgba="1.0 0.0 0.0 2.0"/>
@@ -275,7 +275,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://mdl_description/meshes/Link_6.dae" />
+            filename="package://mdl_description/meshes/Link_6.STL" />
         </geometry>
       </collision>
     </link>
@@ -290,7 +290,7 @@
       <child
         link="Link_6" />
       <axis
-        xyz="0 0 -1" />
+        xyz="0 0 1" />
     </joint>
   </xacro:macro>
 </robot>
