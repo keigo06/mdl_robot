@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<robot name="simple_5dof_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find mdl_description)/urdf/materials.xacro" />
+<!-- <xacro:include filename="$(find mdl_description)/urdf/mdl.trans" />
+<xacro:include filename="$(find mdl_description)/urdf/mdl.gazebo" /> -->
+<xacro:include filename="$(find mdl_description)/urdf/mdl_description.xacro" />
+<!-- <xacro:mdl_description robot_link_color="color_14" robot_EE_1_color="color_0" robot_EE_2_color="color_6"/> -->
+<xacro:mdl_description robot_link_color="Black" robot_EE_1_color="White" robot_EE_2_color="White" />
+<!-- <xacro:mdl_description robot_link_color="${color_14}" robot_EE_1_color="${color_0}" robot_EE_2_color="${color_6}"/> -->
+
+</robot>

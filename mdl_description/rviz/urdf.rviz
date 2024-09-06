@@ -5,8 +5,9 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /RobotModel1
       Splitter Ratio: 0.5
-    Tree Height: 443
+    Tree Height: 279
   - Class: rviz_common/Views
     Expanded:
       - /Current View1
@@ -90,37 +91,19 @@ Visualization Manager:
       Value: true
       Visual Enabled: true
     - Class: rviz_default_plugins/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        Link_1:
-          Value: true
-        Link_2:
-          Value: true
-        Link_3:
-          Value: true
-        Link_4:
-          Value: true
-        Link_5:
-          Value: true
-        Link_6:
-          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
-      Show Names: false
+      Show Names: true
       Tree:
-        Link_1:
-          Link_2:
-            Link_3:
-              Link_4:
-                Link_5:
-                  Link_6:
-                    {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -159,12 +142,12 @@ Visualization Manager:
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1043
+  Height: 773
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000001cb000003b9fc0200000002fb000000100044006900730070006c006100790073010000003d0000023e000000c900fffffffb0000000a00560069006500770073010000028100000175000000a400ffffff000005af000003b900000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000001cb000002abfc0200000002fb000000100044006900730070006c006100790073010000003d0000019a000000c900fffffffb0000000a0056006900650077007301000001dd0000010b000000a400ffffff000003cf000002ab00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1920
+  Width: 1440
   X: 1920
-  Y: 0
+  Y: 168
