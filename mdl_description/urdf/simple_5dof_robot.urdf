@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="simple_5dof_robot">
+  <link
+    name="Link_1">
+    <inertial>
+      <origin
+        xyz="4.0039E-18 2.4167E-19 0.013282"
+        rpy="0 0 0" />
+      <mass
+        value="0.24406" />
+      <inertia
+        ixx="0.00019779"
+        ixy="5.4751E-20"
+        ixz="6.3796E-21"
+        iyy="0.00019779"
+        iyz="5.4749E-22"
+        izz="0.00035252" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://mdl_description/meshes/Link_1.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0.50196 0.50196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://mdl_description/meshes/Link_1.dae" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="Link_2">
+    <inertial>
+      <origin
+        xyz="2.1865E-09 -0.0043644 0.074128"
+        rpy="0 0 0" />
+      <mass
+        value="0.091778" />
+      <inertia
+        ixx="6.8897E-05"
+        ixy="5.2841E-12"
+        ixz="-1.6543E-12"
+        iyy="7.1629E-05"
+        iyz="1.0363E-05"
+        izz="2.3714E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://mdl_description/meshes/Link_2.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.50196 0.50196 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://mdl_description/meshes/Link_2.dae" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_1"
+    type="continuous">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="Link_1" />
+    <child
+      link="Link_2" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="Link_3">
+    <inertial>
+      <origin
+        xyz="0.12 -2.6837E-08 0.0036605"
+        rpy="0 0 0" />
+      <mass
+        value="0.21881" />
+      <inertia
+        ixx="3.5934E-05"
+        ixy="3.0624E-10"
+        ixz="-4.9473E-09"
+        iyy="0.0016096"
+        iyz="3.1981E-10"
+        izz="0.0016144" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://mdl_description/meshes/Link_3.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.50196 1 0.50196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://mdl_description/meshes/Link_3.dae" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_2"
+    type="continuous">
+    <origin
+      xyz="0 0 0.1"
+      rpy="1.5708 -1.5708 0" />
+    <parent
+      link="Link_2" />
+    <child
+      link="Link_3" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="Link_4">
+    <inertial>
+      <origin
+        xyz="0.12 2.6837E-08 -0.0036605"
+        rpy="0 0 0" />
+      <mass
+        value="0.21881" />
+      <inertia
+        ixx="3.5934E-05"
+        ixy="-3.0624E-10"
+        ixz="4.9473E-09"
+        iyy="0.0016096"
+        iyz="3.1981E-10"
+        izz="0.0016144" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://mdl_description/meshes/Link_4.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.50196 1 0.50196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://mdl_description/meshes/Link_4.dae" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_3"
+    type="continuous">
+    <origin
+      xyz="0.24 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="Link_3" />
+    <child
+      link="Link_4" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="Link_5">
+    <inertial>
+      <origin
+        xyz="0.025872 2.1865E-09 0.0043644"
+        rpy="0 0 0" />
+      <mass
+        value="0.091778" />
+      <inertia
+        ixx="2.3714E-05"
+        ixy="1.6543E-12"
+        ixz="1.0363E-05"
+        iyy="6.8897E-05"
+        iyz="-5.2841E-12"
+        izz="7.1629E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://mdl_description/meshes/Link_5.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.50196 0.50196 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://mdl_description/meshes/Link_5.dae" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_4"
+    type="continuous">
+    <origin
+      xyz="0.24 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="Link_4" />
+    <child
+      link="Link_5" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="Link_6">
+    <inertial>
+      <origin
+        xyz="-3.7902E-18 -7.3614E-19 -0.013282"
+        rpy="0 0 0" />
+      <mass
+        value="0.24406" />
+      <inertia
+        ixx="0.00019779"
+        ixy="-6.0525E-20"
+        ixz="3.6581E-21"
+        iyy="0.00019779"
+        iyz="5.7166E-22"
+        izz="0.00035252" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://mdl_description/meshes/Link_6.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0.50196 0.50196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://mdl_description/meshes/Link_6.dae" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_5"
+    type="continuous">
+    <origin
+      xyz="0.1 0 0"
+      rpy="1.5708 0 1.5708" />
+    <parent
+      link="Link_5" />
+    <child
+      link="Link_6" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+</robot>
