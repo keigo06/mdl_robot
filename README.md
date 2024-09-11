@@ -7,7 +7,7 @@
 
 ## Install
 
-```terminal
+```bash
 # git clone repo
 mkdir -p ~/mdl_ws/src
 cd ~/mdl_ws/src
@@ -17,7 +17,7 @@ cd ~/mdl_ws && colcon build --symlink-install
 
 - Install MoveIt Humble by following [Getting Started](https://moveit.picknik.ai/humble/doc/tutorials/getting_started/getting_started.html)
 
-```terminal
+```bash
 source /opt/ros/humble/setup.bash
 sudo apt install python3-rosdep
 sudo rosdep init
@@ -39,4 +39,8 @@ sudo apt update
 sudo apt install ros-humble-urdf-launch
 
 source /opt/ros/humble/setup.bash
-'''
+```
+
+```bash
+ros2 launch moveit_setup_assistant setup_assistant.launch.py
+```
