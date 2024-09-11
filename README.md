@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 
-# modular robot repo
-=======
 # Modular Construct Robot
->>>>>>> 8e2055b1b7d0686b0ef79b6e814b179ca5d104d4
 
 ## Requirements
 
@@ -12,15 +8,6 @@
 
 ## Install
 
-<<<<<<< HEAD
-```
-# Make a workspace
-mkdir -p ~/manta_ws/src
-cd ~/manta_ws/src
-git clone https://github.com/tasada038/manta_v2.git
-cd ~/manta_ws && colcon build --symlink-install
-```
-=======
 ```bash
 # git clone repo
 mkdir -p ~/mdl_ros2_ws/src
@@ -122,4 +109,3 @@ I wrote this as a note for furure work reference
   - /home/name/mdl_ros2_ws/src/mdl_robot/src/mdl_moveit_config
   - Generate Packages
   - Exit
->>>>>>> 8e2055b1b7d0686b0ef79b6e814b179ca5d104d4
