@@ -9,10 +9,10 @@
 
 ```bash
 # git clone repo
-mkdir -p ~/mdl_ws/src
-cd ~/mdl_ws/src
+mkdir -p ~/mdl_ros2_ws/src
+cd ~/mdl_ros2_ws/src
 git clone https://github.com/keigo06/mdl_robot.git
-cd ~/mdl_ws && colcon build --symlink-install
+cd ~/mdl_ros2_ws && colcon build --symlink-install
 ```
 
 - Install MoveIt Humble by following [Getting Started](https://moveit.picknik.ai/humble/doc/tutorials/getting_started/getting_started.html)
@@ -44,3 +44,58 @@ source /opt/ros/humble/setup.bash
 ```bash
 ros2 launch moveit_setup_assistant setup_assistant.launch.py
 ```
+
+## MoveIt Setup Assistant
+
+- Select Start Screen
+  - Select Create New MoveIt Configuration Package
+  - Select Browse
+  - Select mdl_robot/mdl_description/urdf/mdl.xacro
+- Select Self-Collision Panel
+  - Generate Collision matrix
+- Select Vitrual Joints Panel
+  - Add Virtual Joint
+    TODO: Select Vitrual Joint
+  - ここで根本と手先両方選ぶべきなのかわからない
+  - Worldに固定したいときには追加する, とも
+  - 台車＋アームのときには追加する, とも書かれている
+  - とりあえずは選択しない
+- Select Plannning Groups Panel
+  - Add Group
+    - Group Name: simple_5dof_robot
+    - Kinematic Solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+    - Kine.~: default setting OK
+    - Group Default Planner: BiTRRT
+  - Add Joints
+    - Select All Joints
+- Select Robot Poses Panel
+  - Pose Name: home
+  - Planning Group: simple_5dof_robot
+  - Joint_1~5: 0.00
+  - Save
+- Select End Effectors Panel
+  - TODO
+- Select RIS 2 Controllers
+  - Add Controller
+    - Controller Name: simple_5dof_robot_controller
+    - Controller Type: joint_trajectory_controller/JointTrajectoryController
+    - Add Plannning Group Joints
+      - Select simple_5dof_arm
+      - Select >
+      - Save
+- Select MoveIt Controllers
+  - Add Contorller
+    - Controller Type: FollowJointTrajectory
+    - Action Namespace: follow_joint_trajetory
+    - Add Plannning Group Joints
+      - Select simple_5dof_arm
+      - Select >
+      - Save
+- Perception
+  - Pass
+- Author Information
+  - your Name and Email
+- Configuration Files
+  - /home/name/mdl_ros2_ws/src/mdl_moveit_config
+  - Generate Packages
+  - Exit
