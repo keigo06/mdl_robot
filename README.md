@@ -34,7 +34,7 @@ sudo apt install python3-vcstool
 
 #Install MoveIt
 sudo apt install ros-humble-robot-state-publisher
-sudo apt-get install ros-humble-ros2-control*
+sudo apt install ros-humble-ros2-control*
 sudo apt install ros-humble-moveit
 
 sudo apt update
