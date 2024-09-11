@@ -33,6 +33,8 @@ colcon mixin update default
 sudo apt install python3-vcstool
 
 #Install MoveIt
+sudo apt install ros-humble-robot-state-publisher
+sudo apt-get install ros-humble-ros2-control*
 sudo apt install ros-humble-moveit
 
 sudo apt update
@@ -47,6 +49,8 @@ ros2 launch moveit_setup_assistant setup_assistant.launch.py
 
 ## MoveIt Setup Assistant
 
+I wrote this as a note for furure work reference
+
 - Select Start Screen
   - Select Create New MoveIt Configuration Package
   - Select Browse
@@ -55,6 +59,10 @@ ros2 launch moveit_setup_assistant setup_assistant.launch.py
   - Generate Collision matrix
 - Select Vitrual Joints Panel
   - Add Virtual Joint
+    - Virtual Joint Name: virtual_joint_EE_1
+    - Child Link: Link_1
+    - Parent Frame Name: world
+    - Joint Type: fixed
     TODO: Select Vitrual Joint
   - ここで根本と手先両方選ぶべきなのかわからない
   - Worldに固定したいときには追加する, とも
@@ -69,7 +77,7 @@ ros2 launch moveit_setup_assistant setup_assistant.launch.py
   - Add Joints
     - Select All Joints
 - Select Robot Poses Panel
-  - Pose Name: home
+  - Pose Name: ready
   - Planning Group: simple_5dof_robot
   - Joint_1~5: 0.00
   - Save
@@ -85,6 +93,7 @@ ros2 launch moveit_setup_assistant setup_assistant.launch.py
       - Save
 - Select MoveIt Controllers
   - Add Contorller
+    - Controller Name: simple_5dof_robot_controller
     - Controller Type: FollowJointTrajectory
     - Action Namespace: follow_joint_trajetory
     - Add Plannning Group Joints
@@ -96,6 +105,6 @@ ros2 launch moveit_setup_assistant setup_assistant.launch.py
 - Author Information
   - your Name and Email
 - Configuration Files
-  - /home/name/mdl_ros2_ws/src/mdl_moveit_config
+  - /home/name/mdl_ros2_ws/src/mdl_robot/src/mdl_moveit_config
   - Generate Packages
   - Exit
