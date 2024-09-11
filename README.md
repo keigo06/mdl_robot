@@ -109,6 +109,3 @@ I wrote this as a note for furure work reference
   - /home/name/mdl_ros2_ws/src/mdl_robot/src/mdl_moveit_config
   - Generate Packages
   - Exit
-
-- rebase
-- rebase 2
