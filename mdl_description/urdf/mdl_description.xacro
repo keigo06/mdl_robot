@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot name="simple_5dof_robot"  xmlns:xacro="http://www.ros.org/wiki/xacro" >
-  <xacro:macro name="mdl_description" params="robot_link_color:='White' robot_EE_1_color:='White' robot_EE_2_color:='White'">
+  <xacro:macro name="mdl_description" params="robot_link_color robot_EE_1_color robot_EE_2_color">
     <link name="Link_1">
       <inertial>
         <origin
@@ -23,7 +23,7 @@
         <geometry>
           <mesh filename="package://mdl_description/meshes/Link_1.STL" />
         </geometry>
-        <material name="red">
+        <material name="${robot_EE_1_color}">
           <color rgba="1.0 0.0 0.0 2.0"/>
         </material>
       </visual>
@@ -61,7 +61,7 @@
           <mesh
             filename="package://mdl_description/meshes/Link_2.STL" />
         </geometry>
-        <material name="red">
+        <material name="${robot_link_color}">
           <color rgba="1.0 0.0 0.0 2.0"/>
         </material>
       </visual>
@@ -112,7 +112,7 @@
           <mesh
             filename="package://mdl_description/meshes/Link_3.STL" />
         </geometry>
-        <material name="red">
+        <material name="${robot_link_color}">
           <color rgba="1.0 0.0 0.0 2.0"/>
         </material>
       </visual>
@@ -163,7 +163,7 @@
           <mesh
             filename="package://mdl_description/meshes/Link_4.STL" />
         </geometry>
-        <material name="red">
+        <material name="${robot_link_color}">
           <color rgba="1.0 0.0 0.0 2.0"/>
         </material>
       </visual>
@@ -214,7 +214,7 @@
           <mesh
             filename="package://mdl_description/meshes/Link_5.STL" />
         </geometry>
-        <material name="red">
+        <material name="${robot_link_color}">
           <color rgba="1.0 0.0 0.0 2.0"/>
         </material>
       </visual>
@@ -265,7 +265,7 @@
           <mesh
             filename="package://mdl_description/meshes/Link_6.STL" />
         </geometry>
-        <material name="red">
+        <material name="${robot_EE_2_color}">
           <color rgba="1.0 0.0 0.0 2.0"/>
         </material>
       </visual>
