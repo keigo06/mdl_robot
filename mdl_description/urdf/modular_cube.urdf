@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="modular_cube">
+    <link name="base_link"/>
+    <joint name="virtual_joint" type="fixed">
+        <parent link="base_link"/>
+        <child  link="cube_link"/>
+    </joint>
+    <link name="cube_link">
+        <!-- <inertial>
+            <origin xyz="0 0 0" />
+            <mass value="1.0" />
+        </inertial> -->
+        <visual>
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <box size="0.12 0.12 0.12" />
+            </geometry>
+        </visual>
+        <!-- <collision>
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <box size="0.12 0.12 0.12" />
+            </geometry>
+        </collision> -->
+    </link>
+</robot>
