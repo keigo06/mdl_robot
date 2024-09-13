@@ -63,7 +63,7 @@ I wrote this as a note for furure work reference
     - Virtual Joint Name: virtual_joint_EE_1
     - Child Link: Link_1
     - Parent Frame Name: world
-    - Joint Type: fixed
+    - Joint Type: virtusl
     TODO: Select Vitrual Joint
   - ここで根本と手先両方選ぶべきなのかわからない
   - Worldに固定したいときには追加する, とも
