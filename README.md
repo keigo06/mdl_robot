@@ -110,4 +110,11 @@ I wrote this as a note for furure work reference
   - Generate Packages
   - Exit
 
-- rebase
+## Rviz
+
+- launch simple_5dof_robot on Rviz
+
+```bash
+cd ~/mdl_ros2_ws
+ros2 launch mdl_moveit_config demo.launch.py
+```
