@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<robot name="simple_5dof_robot" xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+  <material name="color_0">
+    <color rgba="0.122 0.467 0.706 1.000"/>
+  </material>
+  <material name="color_1">
+    <color rgba="0.682 0.780 0.910 1.000"/>
+  </material>
+  <material name="color_2">
+    <color rgba="1.000 0.498 0.055 1.000"/>
+  </material>
+  <material name="color_3">
+    <color rgba="1.000 0.733 0.471 1.000"/>
+  </material>
+  <material name="color_4">
+    <color rgba="0.173 0.627 0.173 1.000"/>
+  </material>
+  <material name="color_5">
+    <color rgba="0.596 0.875 0.541 1.000"/>
+  </material>
+  <material name="color_6">
+    <color rgba="0.839 0.153 0.157 1.000"/>
+  </material>
+  <material name="color_7">
+    <color rgba="1.000 0.596 0.588 1.000"/>
+  </material>
+  <material name="color_8">
+    <color rgba="0.580 0.404 0.741 1.000"/>
+  </material>
+  <material name="color_9">
+    <color rgba="0.773 0.690 0.835 1.000"/>
+  </material>
+  <material name="color_10">
+    <color rgba="0.549 0.337 0.294 1.000"/>
+  </material>
+  <material name="color_11">
+    <color rgba="0.769 0.612 0.580 1.000"/>
+  </material>
+  <material name="color_12">
+    <color rgba="0.890 0.467 0.761 1.000"/>
+  </material>
+  <material name="color_13">
+    <color rgba="0.969 0.714 0.824 1.000"/>
+  </material>
+  <material name="color_14">
+    <color rgba="0.498 0.498 0.498 1.000"/>
+  </material>
+  <material name="color_15">
+    <color rgba="0.780 0.780 0.780 1.000"/>
+  </material>
+  <material name="color_16">
+    <color rgba="0.737 0.741 0.133 1.000"/>
+  </material>
+  <material name="color_17">
+    <color rgba="0.859 0.859 0.553 1.000"/>
+  </material>
+  <material name="color_18">
+    <color rgba="0.090 0.745 0.812 1.000"/>
+  </material>
+  <material name="color_19">
+    <color rgba="0.620 0.855 0.898 1.000"/>
+  </material>
+
+
+</robot>

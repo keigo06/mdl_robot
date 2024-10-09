@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<robot name="mdl_cube" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find mdl_cube_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find mdl_cube_description)/urdf/mdl_cube_description.xacro" />
+<xacro:mdl_cube_description
+    color_0="color_0"
+    color_1="color_1"
+    color_2="color_2"
+    color_3="color_3"
+    color_4="color_4"
+    color_5="color_5"
+    color_6="color_6"
+    color_7="color_7"
+    color_8="color_8"
+    color_9="color_9"
+    color_10="color_10"
+    color_11="color_11"
+    color_12="color_12"
+    color_13="color_13"
+    color_14="color_14"
+    color_15="color_15"
+    color_16="color_16"
+    color_17="color_17"
+    color_18="color_18"
+    color_19="color_19"/>
+
+</robot>
