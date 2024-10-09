@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<robot name="modular_cube" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find mdl_cube_description)/urdf/mdl_base.xacro" />
+<xacro:include filename="$(find mdl_cube_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find mdl_cube_description)/urdf/mdl_cube_description.xacro" />
+
+<xacro:base_macro/>
+<xacro:mdl_cube_description prefix="mdl_cube_00" parent="base_link" pos_xyz="0.00 0.00 0.06" mdl_cube_color="color_0"/>
+<xacro:mdl_cube_description prefix="mdl_cube_01" parent="base_link" pos_xyz="0.00 0.00 0.18" mdl_cube_color="color_2"/>
+<xacro:mdl_cube_description prefix="mdl_cube_02" parent="base_link" pos_xyz="0.00 0.00 0.30" mdl_cube_color="color_4"/>
+<xacro:mdl_cube_description prefix="mdl_cube_03" parent="base_link" pos_xyz="0.12 0.00 0.06" mdl_cube_color="color_6"/>
+<xacro:mdl_cube_description prefix="mdl_cube_04" parent="base_link" pos_xyz="0.12 0.00 0.18" mdl_cube_color="color_8"/>
+<xacro:mdl_cube_description prefix="mdl_cube_05" parent="base_link" pos_xyz="0.12 0.00 0.30" mdl_cube_color="color_10"/>
+<xacro:mdl_cube_description prefix="mdl_cube_06" parent="base_link" pos_xyz="0.24 0.00 0.06" mdl_cube_color="color_12"/>
+<xacro:mdl_cube_description prefix="mdl_cube_07" parent="base_link" pos_xyz="0.24 0.00 0.18" mdl_cube_color="color_14"/>
+<xacro:mdl_cube_description prefix="mdl_cube_08" parent="base_link" pos_xyz="0.24 0.00 0.30" mdl_cube_color="color_16"/>
+
+</robot>
