@@ -26,6 +26,9 @@ class CubeNode(Node):
         cmap = plt.get_cmap('tab20')
         self.colors = [cmap(i % 20) for i in range(num_cubes)]
 
+        # コネクタのオフセット（キューブの中心から面までの距離）
+        self.face_offset = 0.06
+
     def publish_and_broadcast(self):
         """
         キューブの状態をパブリッシュ・ブロードキャストするメソッド。
@@ -39,7 +42,7 @@ class CubeNode(Node):
             euler_angles = state['euler_angles']
             qw, qx, qy, qz = euler2quat(*euler_angles)
 
-            # Markerメッセージの作成
+            # CubeのMarkerメッセージの作成
             marker = Marker()
             marker.header.stamp = self.get_clock().now().to_msg()
             marker.header.frame_id = 'world'
@@ -67,7 +70,7 @@ class CubeNode(Node):
 
             marker_array.markers.append(marker)
 
-            # TransformStampedの作成とブロードキャスト
+            # CubeのTransformStampedの作成とブロードキャスト
             t = TransformStamped()
             t.header.stamp = self.get_clock().now().to_msg()
             t.header.frame_id = 'world'
@@ -83,5 +86,54 @@ class CubeNode(Node):
             # 座標変換のブロードキャスト
             self.tf_broadcaster.sendTransform(t)
 
+            # コネクタのブロードキャスト
+            self.broadcast_connector_transform(cube, i)
+
         # MarkerArrayのパブリッシュ
         self.publisher_.publish(marker_array)
+
+    def broadcast_connector_transform(self, cube, cube_id):
+        """
+        各面の結合面（connector）の位置をbroadcastする
+        :param cube: 対象のキューブ
+        :param cube_id: キューブのID
+        """
+        face_offsets = [
+            (self.face_offset, 0.0, 0.0),   # +X
+            (-self.face_offset, 0.0, 0.0),  # -X
+            (0.0, self.face_offset, 0.0),   # +Y
+            (0.0, -self.face_offset, 0.0),  # -Y
+            (0.0, 0.0, self.face_offset),   # +Z
+            (0.0, 0.0, -self.face_offset)   # -Z
+        ]
+
+        for face_id, offset in enumerate(face_offsets):
+            t = TransformStamped()
+            t.header.stamp = self.get_clock().now().to_msg()
+            t.header.frame_id = f'cube_frame_{cube_id}'
+            t.child_frame_id = f'cube_{cube_id}_face_{face_id}_connector'
+            t.transform.translation.x = offset[0]
+            t.transform.translation.y = offset[1]
+            t.transform.translation.z = offset[2]
+
+            # 面の姿勢 (ここでは回転はなし)
+            t.transform.rotation.x, t.transform.rotation.y, t.transform.rotation.z, t.transform.rotation.w = euler2quat(
+                0, 0, 0)
+
+            # 座標変換のブロードキャスト
+            self.tf_broadcaster.sendTransform(t)
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = CubeNode(num_cubes=5)  # 5個のキューブを作成
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    node.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()

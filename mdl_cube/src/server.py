@@ -9,7 +9,7 @@ import math
 class Server(Node):
     def __init__(self):
         super().__init__('server')
-        self.cube_node = CubeNode(num_cubes=5)  # CubeNodeのインスタンスを作成
+        self.cube_node = CubeNode(num_cubes=5)
         self.timer_period = 0.1
         self.timer = self.create_timer(self.timer_period, self.update_cubes)
         self.offsets = [i * 0.5 for i in range(5)]  # 各キューブのオフセット時間
@@ -27,8 +27,8 @@ class Server(Node):
         current_time = current_seconds + current_nanoseconds * 1e-9
         pass_time = current_time - self.start_time
 
-        # デモ用の関数を呼び出してキューブの位置を更新
-        self.cube_demo_movement(pass_time)
+        # 各キューブの位置を時間に基づいて更新
+        # self.cube_demo_movement(pass_time)
 
         # キューブの状態を手動でパブリッシュ・ブロードキャスト
         self.cube_node.publish_and_broadcast()
@@ -36,7 +36,6 @@ class Server(Node):
     def cube_demo_movement(self, pass_time):
         """
         デモ用の関数: 時間経過に応じてキューブの位置を更新する
-        :param pass_time: 経過時間
         """
         for i, cube in enumerate(self.cube_node.cubes):
             new_x = 2.0 + math.cos(pass_time + self.offsets[i])  # X方向にコサインで移動
