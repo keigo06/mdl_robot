@@ -4,6 +4,7 @@ import rclpy
 from rclpy.node import Node
 from visualization_msgs.msg import MarkerArray, Marker
 from tf2_ros import TransformBroadcaster
+from tf2_ros import StaticTransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 from transforms3d.euler import euler2quat
 from cube import Cube
@@ -17,6 +18,7 @@ class CubeNode(Node):
         # ROS関連の設定
         self.publisher_ = self.create_publisher(MarkerArray, 'cubes', 10)
         self.tf_broadcaster = TransformBroadcaster(self)
+        self.static_tf_broadcaster = StaticTransformBroadcaster(self)
 
         # Cubeオブジェクトのリストを作成
         self.cubes = [Cube(i, [0.0, 0.0, 0.12 * (i + 1)], [0.0, 0.0, 0.0])
@@ -94,7 +96,7 @@ class CubeNode(Node):
 
     def broadcast_connector_transform(self, cube, cube_id):
         """
-        各面の結合面（connector）の位置をbroadcastする
+        各面の結合面（connector）の位置を静的にbroadcastする
         :param cube: 対象のキューブ
         :param cube_id: キューブのID
         """
@@ -117,11 +119,13 @@ class CubeNode(Node):
             t.transform.translation.z = offset[2]
 
             # 面の姿勢 (ここでは回転はなし)
-            t.transform.rotation.x, t.transform.rotation.y, t.transform.rotation.z, t.transform.rotation.w = euler2quat(
-                0, 0, 0)
+            t.transform.rotation.x = 0.0
+            t.transform.rotation.y = 0.0
+            t.transform.rotation.z = 0.0
+            t.transform.rotation.w = 1.0
 
-            # 座標変換のブロードキャスト
-            self.tf_broadcaster.sendTransform(t)
+            # 静的な座標変換のブロードキャスト
+            self.static_tf_broadcaster.sendTransform(t)
 
 
 def main(args=None):
@@ -129,6 +133,7 @@ def main(args=None):
     node = CubeNode(num_cubes=5)  # 5個のキューブを作成
     try:
         rclpy.spin(node)
+
     except KeyboardInterrupt:
         pass
     node.destroy_node()
