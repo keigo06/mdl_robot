@@ -7,29 +7,43 @@ from tf2_ros import TransformBroadcaster
 from tf2_ros import StaticTransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 from transforms3d.euler import euler2quat
-from cube import Cube
+from assembly import Assembly
 import matplotlib.pyplot as plt
 
 
 class CubeNode(Node):
-    def __init__(self, num_cubes=5):
+    def __init__(self, num_cubes):
         super().__init__('cube_node')
 
         # ROS関連の設定
-        self.publisher_ = self.create_publisher(MarkerArray, 'cubes', 10)
+        self.publisher_ = self.create_publisher(MarkerArray, 'assembly', 10)
         self.tf_broadcaster = TransformBroadcaster(self)
         self.static_tf_broadcaster = StaticTransformBroadcaster(self)
 
         # Cubeオブジェクトのリストを作成
-        self.cubes = [Cube(i, [0.0, 0.0, 0.12 * (i + 1)], [0.0, 0.0, 0.0])
-                      for i in range(num_cubes)]
+        self.assembly = Assembly(num_cubes)
 
         # キューブの色の設定
-        cmap = plt.get_cmap('tab20')
-        self.colors = [cmap(i % 20) for i in range(num_cubes)]
+        self.colors = self.get_cube_colors(num_cubes)
 
         # コネクタのオフセット（キューブの中心から面までの距離）
         self.face_offset = 0.06
+
+        # ここで表示するアセンブリ形状を選択する
+        self.assembly.create_line_assembly()  # 直線状のアセンブリ
+        # self.assembly.create_tower_assembly()  # タワー状のアセンブリ
+        # self.assembly.create_grid_assembly()  # グリッド状のアセンブリ
+
+    def get_cube_colors(self, num_cubes):
+        cmap = plt.get_cmap('tab20')
+        color_map = {}
+        for i in range(20):
+            if i < 10:
+                color_map[i] = cmap(2*i)
+            else:
+                color_map[i] = cmap(2*(i-10)+1)
+
+        return color_map
 
     def publish_and_broadcast(self):
         """
@@ -38,10 +52,10 @@ class CubeNode(Node):
         """
         marker_array = MarkerArray()
 
-        for i, cube in enumerate(self.cubes):
-            state = cube.get_state()
-            position = state['position']
-            euler_angles = state['euler_angles']
+        for i, cube in self.assembly.cubes.items():
+            cube_state = cube.get_state()
+            position = cube_state['position']
+            euler_angles = cube_state['euler_angles']
             qw, qx, qy, qz = euler2quat(*euler_angles)
 
             # CubeのMarkerメッセージの作成
@@ -68,7 +82,7 @@ class CubeNode(Node):
             marker.color.r = color[0]
             marker.color.g = color[1]
             marker.color.b = color[2]
-            marker.color.a = 0.8
+            marker.color.a = 0.9
 
             marker_array.markers.append(marker)
 
