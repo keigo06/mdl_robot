@@ -8,48 +8,15 @@ class Assembly:
         # cubesは辞書形式で登録
         self.num_cubes = num_cubes
         self.cubes = {}
-
-    # def get_cube(self, cube_id):
-    #     """
-    #     指定されたIDのCubeオブジェクトを返す
-    #     :param cube_id: キューブのID
-    #     :return: Cubeオブジェクト
-    #     """
-    #     for cube in self.cubes:
-    #         if cube.cube_id == cube_id:
-    #             return cube
-    #     return None
-
-    # def add_cube(self, position, euler_angles):
-    #     """
-    #     新しいキューブをアセンブリに追加する
-    #     :param position: キューブの初期位置
-    #     :param euler_angles: キューブの初期姿勢
-    #     """
-    #     new_cube = Cube(len(self.cubes), position, euler_angles)
-    #     self.cubes.append(new_cube)
-
-    # def connect_cubes(self, cube1_id, cube2_id, face1, face2):
-    #     """
-    #     2つのキューブを指定された面で結合する
-    #     :param cube1_id: キューブ1のID
-    #     :param cube2_id: キューブ2のID
-    #     :param face1: キューブ1の結合面
-    #     :param face2: キューブ2の結合面
-    #     """
-    #     cube1 = self.get_cube(cube1_id)
-    #     cube2 = self.get_cube(cube2_id)
-
-    #     if cube1 and cube2:
-    #         cube1.connect(face1, cube2, face2)
-    #         cube2.connect(face2, cube1, face1)
-
-    # def get_assembly_state(self):
-    #     """
-    #     アセンブリ全体の状態を返す（各キューブの状態を取得）
-    #     :return: アセンブリ全体のキューブの状態
-    #     """
-    #     return [cube.get_state() for cube in self.cubes]
+        self.actions = []
+        self.unit_vector = [
+            [1, 0, 0],
+            [-1, 0, 0],
+            [0, 1, 0],
+            [0, -1, 0],
+            [0, 0, 1],
+            [0, 0, -1]
+        ]
 
     def create_line_assembly(self):
         """ キューブを直線状に配置するアセンブリを作成 """
@@ -78,6 +45,34 @@ class Assembly:
             for j in range(grid_x):
                 self.cubes[i * grid_x + j] = Cube(
                     cube_id=i * grid_x + j,
-                    position=[i * 0.12, j * 0.12, 0.06],
+                    pos=[i * 0.12, j * 0.12, 0.06],
                     euler_angles=[0.0, 0.0, 0.0]
                 )
+
+    def get_outermost_module_ids(self):
+        outermost_module_ids = []
+
+        module_positions = set(tuple(cube.pos)
+                               for cube in self.cubes.values())
+
+        for cube_id, cube in self.cubes.items():
+            is_outermost = False
+            for direction in self.unit_vector:
+                pos_near_asm_possible = tuple(cube.pos + direction)
+                if pos_near_asm_possible not in module_positions:
+                    is_outermost = True
+                    break
+            if is_outermost:
+                outermost_module_ids.append(cube_id)
+        return outermost_module_ids
+
+    def get_near_asm_pos(self):
+        pos_list_near_asm = []
+
+        for cube in self.cubes.values():
+            for direction in self.directions:
+                pos_near_asm_possible = cube.pos + direction
+                if self.is_pos_free(pos_near_asm_possible):
+                    pos_list_near_asm.append(pos_near_asm_possible)
+
+        return pos_list_near_asm
