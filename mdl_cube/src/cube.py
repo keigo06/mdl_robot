@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
 class Cube:
-    def __init__(self, cube_id, position, euler_angles):
+    def __init__(self, cube_id, pos, euler_angles):
         """
         キューブの初期化
         :param cube_id: キューブのID
-        :param position: キューブの初期位置 [x, y, z]
+        :param pos: キューブの初期位置 [x, y, z]
         :param euler_angles: キューブの初期姿勢 [roll, pitch, yaw]
         """
         self.cube_id = cube_id
-        self.position = position  # [x, y, z]
+        self.pos = pos  # [x, y, z]
         self.euler_angles = euler_angles  # [roll, pitch, yaw]
 
         # 各面のconnectorを初期化 (0-5の各面が持つconnector)
@@ -40,7 +40,7 @@ class Cube:
         """
         キューブの位置を更新する
         """
-        self.position = new_position
+        self.pos = new_position
 
     def update_orientation(self, new_euler_angles):
         """
@@ -54,6 +54,6 @@ class Cube:
         :return: 現在の位置と姿勢を辞書形式で返す
         """
         return {
-            'position': self.position,
+            'pos': self.pos,
             'euler_angles': self.euler_angles
         }

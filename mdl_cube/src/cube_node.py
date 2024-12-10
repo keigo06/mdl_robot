@@ -54,7 +54,7 @@ class CubeNode(Node):
 
         for i, cube in self.assembly.cubes.items():
             cube_state = cube.get_state()
-            position = cube_state['position']
+            pos = cube_state['pos']
             euler_angles = cube_state['euler_angles']
             qw, qx, qy, qz = euler2quat(*euler_angles)
 
@@ -66,9 +66,9 @@ class CubeNode(Node):
             marker.id = i
             marker.type = Marker.CUBE
             marker.action = Marker.ADD
-            marker.pose.position.x = position[0]
-            marker.pose.position.y = position[1]
-            marker.pose.position.z = position[2]
+            marker.pose.position.x = pos[0]
+            marker.pose.position.y = pos[1]
+            marker.pose.position.z = pos[2]
             marker.pose.orientation.x = qx
             marker.pose.orientation.y = qy
             marker.pose.orientation.z = qz
@@ -91,9 +91,9 @@ class CubeNode(Node):
             t.header.stamp = self.get_clock().now().to_msg()
             t.header.frame_id = 'world'
             t.child_frame_id = f'cube_frame_{i}'
-            t.transform.translation.x = position[0]
-            t.transform.translation.y = position[1]
-            t.transform.translation.z = position[2]
+            t.transform.translation.x = pos[0]
+            t.transform.translation.y = pos[1]
+            t.transform.translation.z = pos[2]
             t.transform.rotation.x = qx
             t.transform.rotation.y = qy
             t.transform.rotation.z = qz
