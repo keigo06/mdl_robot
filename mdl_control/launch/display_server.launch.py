@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
@@ -9,7 +7,7 @@ import os
 def generate_launch_description():
 
     rviz_config_file = os.path.join(
-        get_package_share_directory('mdl_cube'),
+        get_package_share_directory('mdl_control'),
         'launch',
         'cube_display.rviz'  # Rviz設定ファイルへのパス
     )
@@ -25,7 +23,7 @@ def generate_launch_description():
         ),
         # Serverを起動するノード
         Node(
-            package='mdl_cube',
+            package='mdl_control',
             executable='server.py',  # server.pyを実行
             name='server_node',
             output='screen',
