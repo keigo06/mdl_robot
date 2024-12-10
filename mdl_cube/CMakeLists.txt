@@ -13,7 +13,12 @@ find_package(tf2_ros REQUIRED)
 
 install(
     PROGRAMS
-    src/cube_node.py                # srcディレクトリ内のPythonスクリプト
+    src/cube_node.py       # CubeNodeモジュール
+    src/cube.py            # Cubeモジュール
+    src/assembly.py        # Assemblyモジュール
+    src/state.py           # Stateモジュール
+    src/planner.py         # Plannerモジュール
+    src/server.py          # Serverモジュール
     DESTINATION lib/${PROJECT_NAME} # インストール先をlib/{パッケージ名}に指定
 )
 
