@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="modular_cube"  xmlns:xacro="http://www.ros.org/wiki/xacro" >
+  <!-- <xacro:macro name="mdl_cube_description" params="color_0"> -->
+  <xacro:macro name="mdl_cube_description" params="prefix parent pos_xyz mdl_cube_color">
+
+    <joint name="${prefix}_body_joint" type="fixed">
+      <origin
+        rpy="0 0 0"
+        xyz="${pos_xyz}"/>
+      <parent link="${parent}"/>
+      <child link="${prefix}_body_link"/>
+    </joint>
+
+    <link name="${prefix}_body_link">
+      <visual>
+        <geometry>
+          <box size="0.12 0.12 0.12"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <material name="${mdl_cube_color}">
+        </material>
+      </visual>
+    </link>
+
+  </xacro:macro>
+</robot>
