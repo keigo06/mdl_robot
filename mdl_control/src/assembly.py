@@ -1,6 +1,6 @@
-from cube import Cube  # Cubeクラスをインポート
+from cube import Cube
 
-import math
+import numpy as np
 
 
 class Assembly:

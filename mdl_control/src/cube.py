@@ -1,57 +1,66 @@
-#!/usr/bin/env python3
+import numpy as np
+from scipy.spatial.transform import Rotation as R
+
 
 class Cube:
-    def __init__(self, cube_id, pos, euler_angles):
+    def __init__(self, cube_id, pos, attitude):
         """
-        キューブの初期化
-        :param cube_id: キューブのID
-        :param pos: キューブの初期位置 [x, y, z]
-        :param euler_angles: キューブの初期姿勢 [roll, pitch, yaw]
+        :param cube_id:         cube ID
+        :param pos:             cube position [x, y, z]
+        :param attitude:        cube attitude quaternion [x, y, z, w]
+        :param connectors:      cube connectors [face0, face1, face2, face3, face4, face5]
         """
-        self.cube_id = cube_id
-        self.pos = pos  # [x, y, z]
-        self.euler_angles = euler_angles  # [roll, pitch, yaw]
+        self.cube_id = self.validate_id(cube_id)
+        self.pos = self.validate_position(pos)
+        self.attitude = self.validate_attitude(attitude)
+        self.module_type = 'active_6_passive_0'
+        self.connectors = []
+        self.set_module_type(self.module_type)
 
-        # 各面のconnectorを初期化 (0-5の各面が持つconnector)
-        # 初期状態は全てactiveのfemaleモードに設定
-        self.connectors = [{'type': 'active', 'mode': 'female'}
-                           for _ in range(6)]
+        self.m_size = 0.12
 
-    def set_connector(self, face, connector_type, mode=None):
-        """
-        setting connector type and mode
-        :param face: どの面か (0-5)
-        :param connector_type: 'active' または 'passive' または 'cannot_connect'
-        :param mode: 'male' または 'female' (activeの場合)
-        """
-        self.connectors[face]['type'] = connector_type
-        if connector_type == 'active':
-            self.connectors[face]['mode'] = mode
+    @staticmethod
+    def validate_id(cube_id):
+        if cube_id is None or cube_id < 0:
+            raise ValueError('invalid cube_id')
+        return cube_id
+
+    @staticmethod
+    def validate_position(pos):
+        if pos is None or len(pos) != 3:
+            raise ValueError('invalid pos')
+        return np.array(pos)
+
+    @staticmethod
+    def validate_attitude(attitude):
+        if attitude is None or len(attitude) != 4:
+            raise ValueError('invalid attitude')
+        return np.array(attitude)
 
     def set_module_type(self, module_type):
         self.module_type = module_type
 
         if module_type == 'active_6_passive_0':
-            # 6つの面がactive, 0つの面がpassive
+            # 6 faces: active / 0 faces: passive
             self.connectors =\
                 [{'type': 'active', 'mode': 'female'} for _ in range(6)]
 
         elif module_type == 'active_5_passive_1':
-            # 5つの面がactive, 1つの面がpassive
+            # 5 faces: active / 1 faces: passive
             self.connectors =\
                 [{'type': 'passive', 'mode': None}]
             self.connectors.extend(
                 [{'type': 'active', 'mode': 'female'} for _ in range(5)])
 
         elif module_type == 'active_4_passive_2_near':
-            # 4つの面がactive, 2つの面(near)がpassive
+            # 4 faces: active / 2 faces(near): passive
             self.connectors =\
                 [{'type': 'passive', 'mode': None} for _ in range(2)]
             self.connectors.extend(
                 [{'type': 'active', 'mode': 'male'} for _ in range(4)])
 
         elif module_type == 'active_4_passive_2_opposite':
-            # 4つの面がactive, 2つの面(opposite)がpassive
+            # 4 faces: active / 2 faces(opposite): passive
             self.connectors =\
                 [{'type': 'passive', 'mode': None}]
             self.connectors.extend(
@@ -62,14 +71,14 @@ class Cube:
                 [{'type': 'active', 'mode': 'female'} for _ in range(2)])
 
         elif module_type == 'active_3_passive_3_near':
-            # 3つの面(near)がactive, 3つの面がpassive
+            # 3 faces(near): active / 3 faces: passive
             self.connectors =\
                 [{'type': 'active', 'mode': 'female'} for _ in range(3)]
             self.connectors.extend(
                 [{'type': 'passive', 'mode': None} for _ in range(3)])
 
         elif module_type == 'active_3_passive_3_konoji':
-            # 3つの面(konoji)がactive, 3つの面がpassive
+            # 3 faces(konoji): active / 3 faces: passive
             self.connectors =\
                 [{'type': 'active', 'mode': 'female'} for _ in range(2)]
             self.connectors.extend(
@@ -80,14 +89,14 @@ class Cube:
                 [{'type': 'passive', 'mode': None}])
 
         elif module_type == 'active_2_passive_4_near':
-            # 2つの面(near)がactive, 4つの面がpassive
+            # 2 faces(near): active / 4 faces: passive
             self.connectors =\
                 [{'type': 'active', 'mode': 'female'} for _ in range(2)]
             self.connectors.extend(
                 [{'type': 'passive', 'mode': None} for _ in range(4)])
 
         elif module_type == 'active_2_passive_4_opposite':
-            # 2つの面(opposite)がactive, 4つの面がpassive
+            # 2 faces(opposite): active / 4 faces: passive
             self.connectors =\
                 [{'type': 'active', 'mode': 'female'}]
             self.connectors.extend(
@@ -98,19 +107,41 @@ class Cube:
                 [{'type': 'passive', 'mode': None} for _ in range(2)])
 
         elif module_type == 'active_1_passive_5':
-            # 1つの面がactive, 5つの面がpassive
+            # 1 face: active / 5 faces: passive
             self.connectors =\
                 [{'type': 'active', 'mode': 'female'}]
             self.connectors.extend(
                 [{'type': 'passive', 'mode': None} for _ in range(5)])
 
         elif module_type == 'active_0_passive_6':
-            # 0つの面がactive, 6つの面がpassive
+            # 0 faces: active / 6 faces: passive
             self.connectors =\
                 [{'type': 'passive', 'mode': None} for _ in range(6)]
 
         else:
             raise ValueError(f"Invalid module type: {module_type}")
+
+    def set_connector(self, face, connector_type, mode=None):
+        """
+        setting connector type and mode
+        :param face:            0-5
+        :param connector_type:  'active' or 'passive' or 'cannot_connect'
+        :param mode:            'male' or 'female' if connector_type is 'active'
+        """
+        self.connectors[face]['type'] = connector_type
+        if connector_type == 'active':
+            self.connectors[face]['mode'] = mode
+
+    def change_active_connector_mode(self, face, mode):
+        """
+        change active connector mode
+        :param face:    0-5
+        :param mode:    'male' or 'female'
+        """
+        if mode not in ['male', 'female']:
+            raise ValueError(f"Invalid mode: {mode}")
+        elif self.connectors[face]['type'] == 'active':
+            self.connectors[face]['mode'] = mode
 
     def get_connector(self, face):
         """
@@ -120,24 +151,56 @@ class Cube:
         """
         return self.connectors[face]
 
-    def update_position(self, new_position):
-        """
-        キューブの位置を更新する
-        """
-        self.pos = new_position
-
-    def update_orientation(self, new_euler_angles):
-        """
-        キューブの姿勢を更新する
-        """
-        self.euler_angles = new_euler_angles
-
     def get_state(self):
         """
         キューブの現在の状態（位置と姿勢）を返す
         :return: 現在の位置と姿勢を辞書形式で返す
         """
         return {
-            'pos': self.pos,
-            'euler_angles': self.euler_angles
+            'pos': self.pos.tolist(),
+            'attitude': self.attitude.tolist()
         }
+
+    def rotate(self, rotation_matrix):
+        """
+        任意の回転行列を使用してキューブの姿勢を変化させる
+        :param rotation_matrix: 3x3の回転行列
+        """
+        r = R.from_matrix(rotation_matrix)
+        new_attitude = r * R.from_quat(self.attitude)
+        self.attitude = new_attitude.as_quat()
+
+    def rotate_x_90(self):
+        """
+        x軸に対して90度回転させる
+        """
+        rotation_matrix = R.from_euler('x', 90, degrees=True).as_matrix()
+        self.rotate(rotation_matrix)
+
+    def rotate_x_minus_90(self):
+        """
+        x軸に対して-90度回転させる
+        """
+        rotation_matrix = R.from_euler('x', -90, degrees=True).as_matrix()
+        self.rotate(rotation_matrix)
+
+    def rotate_y_90(self):
+        """
+        y軸に対して90度回転させる
+        """
+        rotation_matrix = R.from_euler('y', 90, degrees=True).as_matrix()
+        self.rotate(rotation_matrix)
+
+    def rotate_y_minus_90(self):
+        """
+        y軸に対して-90度回転させる
+        """
+        rotation_matrix = R.from_euler('y', -90, degrees=True).as_matrix()
+        self.rotate(rotation_matrix)
+
+    def rotate_z_180(self):
+        """
+        z軸に対して180度回転させる
+        """
+        rotation_matrix = R.from_euler('z', 180, degrees=True).as_matrix()
+        self.rotate(rotation_matrix)
