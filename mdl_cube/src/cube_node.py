@@ -29,6 +29,9 @@ class MultiCubePublisher(Node):
         seconds, nanoseconds = self.get_clock().now().seconds_nanoseconds()
         current_time = seconds + nanoseconds * 1e-9
 
+        # seconds = self.get_clock().now()
+        # current_time = seconds
+
         marker_array = MarkerArray()
 
         for cube in self.cube_list:
