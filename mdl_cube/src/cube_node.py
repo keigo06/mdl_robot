@@ -7,27 +7,30 @@ from tf2_ros import TransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 from transforms3d.euler import euler2quat
 from cube import Cube
-from assembly import Assembly
-from planner import Planner
-
 import matplotlib.pyplot as plt
 
 
 class CubeNode(Node):
-    def __init__(self, num_cubes=5):  # 5個のキューブを扱う
+    def __init__(self, num_cubes=5):
         super().__init__('cube_node')
+
+        # ROS関連の設定
         self.publisher_ = self.create_publisher(MarkerArray, 'cubes', 10)
         self.tf_broadcaster = TransformBroadcaster(self)
+
+        # Cubeオブジェクトのリストを作成
         self.cubes = [Cube(i, [0.0, 0.0, 0.12 * (i + 1)], [0.0, 0.0, 0.0])
                       for i in range(num_cubes)]
-        self.assembly = Assembly(self.cubes)
-        self.planner = Planner()
-        self.timer_period = 0.1
-        self.timer = self.create_timer(self.timer_period, self.timer_callback)
+
+        # キューブの色の設定
         cmap = plt.get_cmap('tab20')
         self.colors = [cmap(i % 20) for i in range(num_cubes)]
 
-    def timer_callback(self):
+    def publish_and_broadcast(self):
+        """
+        キューブの状態をパブリッシュ・ブロードキャストするメソッド。
+        任意のタイミングでも呼び出し可能。
+        """
         marker_array = MarkerArray()
 
         for i, cube in enumerate(self.cubes):
@@ -82,18 +85,3 @@ class CubeNode(Node):
 
         # MarkerArrayのパブリッシュ
         self.publisher_.publish(marker_array)
-
-
-def main(args=None):
-    rclpy.init(args=args)
-    node = CubeNode(num_cubes=5)  # 5個のキューブを扱う設定
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        pass
-    node.destroy_node()
-    rclpy.shutdown()
-
-
-if __name__ == '__main__':
-    main()
