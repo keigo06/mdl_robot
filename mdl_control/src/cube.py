@@ -6,9 +6,8 @@ class Cube:
     def __init__(self, cube_id, pos, attitude):
         """
         :param cube_id:         cube ID
-        :param pos:             cube position [x, y, z]
-        :param attitude:        cube attitude quaternion [x, y, z, w]
-        :param connectors:      cube connectors [face0, face1, face2, face3, face4, face5]
+        :param pos:             cube position np.array([x, y, z])
+        :param attitude:        cube attitude quaternion np.array([x, y, z, w])
         """
         self.cube_id = self.validate_id(cube_id)
         self.pos = self.validate_position(pos)
@@ -157,8 +156,8 @@ class Cube:
         :return: 現在の位置と姿勢を辞書形式で返す
         """
         return {
-            'pos': self.pos.tolist(),
-            'attitude': self.attitude.tolist()
+            'pos': self.pos,
+            'attitude': self.attitude
         }
 
     def rotate(self, rotation_matrix):

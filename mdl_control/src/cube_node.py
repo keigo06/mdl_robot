@@ -26,13 +26,11 @@ class CubeNode(Node):
         # キューブの色の設定
         self.colors = self.get_cube_colors(num_cubes)
 
-        # コネクタのオフセット（キューブの中心から面までの距離）
-        self.face_offset = 0.06
+        # 初期アセンブリをlineに設定
+        self.assembly.create_line_assembly()
 
-        # ここで表示するアセンブリ形状を選択する
-        self.assembly.create_line_assembly()  # 直線状のアセンブリ
-        # self.assembly.create_tower_assembly()  # タワー状のアセンブリ
-        # self.assembly.create_grid_assembly()  # グリッド状のアセンブリ
+        # コネクタのオフセット（キューブの中心から面までの距離）
+        self.face_offset = self.assembly.modules[0].m_size / 2
 
     def get_cube_colors(self, num_cubes):
         cmap = plt.get_cmap('tab20')
@@ -52,11 +50,11 @@ class CubeNode(Node):
         """
         marker_array = MarkerArray()
 
-        for i, cube in self.assembly.cubes.items():
+        for i, cube in self.assembly.modules.items():
             cube_state = cube.get_state()
             pos = cube_state['pos']
-            euler_angles = cube_state['euler_angles']
-            qw, qx, qy, qz = euler2quat(*euler_angles)
+            attitude = cube_state['attitude']
+            qw, qx, qy, qz = attitude
 
             # CubeのMarkerメッセージの作成
             marker = Marker()
