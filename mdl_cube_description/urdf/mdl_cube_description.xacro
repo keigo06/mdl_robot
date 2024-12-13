@@ -1,26 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot name="modular_cube"  xmlns:xacro="http://www.ros.org/wiki/xacro" >
   <!-- <xacro:macro name="mdl_cube_description" params="color_0"> -->
-  <xacro:macro name="mdl_cube_description" params="prefix parent pos_xyz mdl_cube_color">
+  <xacro:macro name="mdl_cube_description" params="prefix parent pos_xyz rpy body_color f0_color f1_color f2_color f3_color f4_color f5_color">
 
-    <joint name="${prefix}_body_joint" type="fixed">
-      <origin
-        rpy="0 0 0"
-        xyz="${pos_xyz}"/>
+    <link name="${prefix}_body_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.11 0.11 0.11"/>
+        </geometry>
+        <material name="${body_color}"/>
+      </visual>
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="1"/>
+        <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_base_joint" type="fixed">
+      <origin xyz="${pos_xyz}" rpy="${rpy}"/>
       <parent link="${parent}"/>
       <child link="${prefix}_body_link"/>
     </joint>
 
-    <link name="${prefix}_body_link">
+    <link name="${prefix}_face_0_link">
       <visual>
-        <geometry>
-          <box size="0.12 0.12 0.12"/>
-        </geometry>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <material name="${mdl_cube_color}">
-        </material>
+        <geometry>
+          <box size="-0.01 0.11 0.11"/>
+        </geometry>
+        <material name="${f0_color}"/>
       </visual>
     </link>
+
+    <joint name="${prefix}_face_0_joint" type="fixed">
+      <origin xyz="0.06 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}_body_link"/>
+      <child link="${prefix}_face_0_link"/>
+    </joint>
+
+    <link name="${prefix}_face_1_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.11 -0.01 0.11"/>
+        </geometry>
+        <material name="${f1_color}"/>
+      </visual>
+    </link>
+
+    <joint name="${prefix}_face_1_joint" type="fixed">
+      <origin xyz="0 0.06 0" rpy="0 0 0"/>
+      <parent link="${prefix}_body_link"/>
+      <child link="${prefix}_face_1_link"/>
+    </joint>
+
+    <link name="${prefix}_face_2_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.11 0.11 -0.01"/>
+        </geometry>
+        <material name="${f2_color}"/>
+      </visual>
+    </link>
+
+    <joint name="${prefix}_face_2_joint" type="fixed">
+      <origin xyz="0 0 0.06" rpy="0 0 0"/>
+      <parent link="${prefix}_body_link"/>
+      <child link="${prefix}_face_2_link"/>
+    </joint>
+
+    <link name="${prefix}_face_3_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.01 0.11 0.11"/>
+        </geometry>
+        <material name="${f3_color}"/>
+      </visual>
+    </link>
+
+    <joint name="${prefix}_face_3_joint" type="fixed">
+      <origin xyz="-0.06 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}_body_link"/>
+      <child link="${prefix}_face_3_link"/>
+    </joint>
+
+    <link name="${prefix}_face_4_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.11 0.01 0.11"/>
+        </geometry>
+        <material name="${f4_color}"/>
+      </visual>
+    </link>
+
+    <joint name="${prefix}_face_4_joint" type="fixed">
+      <origin xyz="0 -0.06 0" rpy="0 0 0"/>
+      <parent link="${prefix}_body_link"/>
+      <child link="${prefix}_face_4_link"/>
+    </joint>
+
+    <link name="${prefix}_face_5_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.11 0.11 0.01"/>
+        </geometry>
+        <material name="${f5_color}"/>
+      </visual>
+    </link>
+
+    <joint name="${prefix}_face_5_joint" type="fixed">
+      <origin xyz="0 0 -0.06" rpy="0 0 0"/>
+      <parent link="${prefix}_body_link"/>
+      <child link="${prefix}_face_5_link"/>
+    </joint>
 
   </xacro:macro>
 </robot>

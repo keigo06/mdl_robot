@@ -12,6 +12,7 @@ find_package(urdf_launch REQUIRED)
 
 install(DIRECTORY
   rviz
+  launch
   meshes
   urdf
   DESTINATION share/${PROJECT_NAME}/
