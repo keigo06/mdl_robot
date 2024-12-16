@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """ Assembly class
 This module provides a class for creating and manipulating assemblies of cubes.
 The Assembly class includes methods for creating some kinds of assemblies.

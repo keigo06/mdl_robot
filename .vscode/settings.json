@@ -10,4 +10,22 @@
     "python.venvFolders": [
         ".venv"
     ],
+    "[python]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.defaultFormatter": "eeyore.yapf",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+        }
+    },
+    "yapf.args": [
+        "--style",
+        "{based_on_style: google, column_limit: 100, indent_width: 2}"
+    ],
+    "mypy-type-checker.args": [
+        "--ignore-missing-imports",
+        "--follow-import=silent",
+        "--check-untyped-defs"
+    ]
 }

@@ -3,7 +3,7 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
-from cube_node import CubeNode
+from mdl_robot.mdl_control.scripts.cube_visualizer import CubeNode
 
 
 class Server(Node):
