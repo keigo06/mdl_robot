@@ -118,3 +118,23 @@ I wrote this as a note for furure work reference
 cd ~/mdl_ros2_ws
 ros2 launch mdl_moveit_config demo.launch.py
 ```
+
+## Demo of mdl_control
+
+- Rviz
+
+```bash
+ros2 launch mdl_control display_cube.launch.py
+```
+
+- Visualizer
+
+```bash
+ros2 launch mdl_control cube_cisualizer.launch.py
+```
+
+- Simple Node - will be replace by launch of server.py
+
+```bash
+ros2 launch mdl_control check_simple_cube_publisher.launch.py
+```

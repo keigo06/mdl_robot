@@ -12,11 +12,11 @@
 
 <!-- grid_6-->
 <xacro:if value="$(arg grid_6)">
-  <xacro:mdl_cube_description prefix="mdl_cube_00" parent="base_link" pos_xyz="0.00 0.00 0.06" rpy="0 0 0" body_color="color_0" f0_color="color_0" f1_color="color_0" f2_color="color_0" f3_color="color_0" f4_color="color_0" f5_color="color_0"/>
-  <xacro:mdl_cube_description prefix="mdl_cube_01" parent="base_link" pos_xyz="0.00 0.00 0.18" rpy="0 0 0" body_color="color_0" f0_color="color_0" f1_color="color_0" f2_color="color_0" f3_color="color_0" f4_color="color_0" f5_color="color_0"/>
-  <xacro:mdl_cube_description prefix="mdl_cube_02" parent="base_link" pos_xyz="0.00 0.00 0.30" rpy="0 0 0" body_color="color_0" f0_color="color_0" f1_color="color_0" f2_color="color_0" f3_color="color_0" f4_color="color_0" f5_color="color_0"/>
-  <xacro:mdl_cube_description prefix="mdl_cube_03" parent="base_link" pos_xyz="0.12 0.00 0.06" rpy="0 0 0" body_color="color_0" f0_color="color_0" f1_color="color_0" f2_color="color_0" f3_color="color_0" f4_color="color_0" f5_color="color_0"/>
-  <xacro:mdl_cube_description prefix="mdl_cube_04" parent="base_link" pos_xyz="0.12 0.00 0.18" rpy="0 0 0" body_color="color_0" f0_color="color_0" f1_color="color_0" f2_color="color_0" f3_color="color_0" f4_color="color_0" f5_color="color_0"/>
-  <xacro:mdl_cube_description prefix="mdl_cube_05" parent="base_link" pos_xyz="0.12 0.00 0.30" rpy="0 0 0" body_color="color_0" f0_color="color_0" f1_color="color_0" f2_color="color_0" f3_color="color_0" f4_color="color_0" f5_color="color_0"/>
+  <xacro:mdl_cube_description prefix="mdl_cube_00" parent="base_link" pos_xyz="0.00 0.00 0.06" rpy="0.0 0.0 0.0" body_color="color_0" f0_color="color_0" f1_color="color_0" f2_color="color_0" f3_color="color_0" f4_color="color_0" f5_color="color_0"/>
+  <xacro:mdl_cube_description prefix="mdl_cube_01" parent="base_link" pos_xyz="0.00 0.00 0.18" rpy="0.0 0.0 0.0" body_color="color_0" f0_color="color_0" f1_color="color_0" f2_color="color_0" f3_color="color_0" f4_color="color_0" f5_color="color_0"/>
+  <xacro:mdl_cube_description prefix="mdl_cube_02" parent="base_link" pos_xyz="0.00 0.00 0.30" rpy="0.0 0.0 0.0" body_color="color_0" f0_color="color_0" f1_color="color_0" f2_color="color_0" f3_color="color_0" f4_color="color_0" f5_color="color_0"/>
+  <xacro:mdl_cube_description prefix="mdl_cube_03" parent="base_link" pos_xyz="0.12 0.00 0.06" rpy="0.0 0.0 0.0" body_color="color_0" f0_color="color_0" f1_color="color_0" f2_color="color_0" f3_color="color_0" f4_color="color_0" f5_color="color_0"/>
+  <xacro:mdl_cube_description prefix="mdl_cube_04" parent="base_link" pos_xyz="0.12 0.00 0.18" rpy="0.0 0.0 0.0" body_color="color_0" f0_color="color_0" f1_color="color_0" f2_color="color_0" f3_color="color_0" f4_color="color_0" f5_color="color_0"/>
+  <xacro:mdl_cube_description prefix="mdl_cube_05" parent="base_link" pos_xyz="0.12 0.00 0.30" rpy="0.0 0.0 0.0" body_color="color_0" f0_color="color_0" f1_color="color_0" f2_color="color_0" f3_color="color_0" f4_color="color_0" f5_color="color_0"/>
 </xacro:if>
 </robot>
