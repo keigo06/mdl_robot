@@ -3,16 +3,17 @@
 """ Assembly class
 This module provides a class for creating and manipulating assemblies of cubes.
 The Assembly class includes methods for creating some kinds of assemblies.
-It also provides methods for managing network which show the connection of modules.
+It also provides methods for managing network which show connection of modules.
 """
 
 from cube import Cube
 
 import numpy as np
+import numpy.typing as npt
 
 
 class Assembly:
-    def __init__(self, num_cubes=6):
+    def __init__(self, num_cubes: int = 6):
         self.num_cubes = num_cubes
         self.modules = {}
         self.actions = []
@@ -53,7 +54,7 @@ class Assembly:
                 self.modules[i * grid_x + j].set_module_type(
                     'active_6_passive_0')
 
-    def find_factors(selfg, n):
+    def find_factors(self, n: int) -> list:
         """Return a list of factors of n.
 
         Args:
@@ -129,7 +130,7 @@ class Assembly:
 
     #     return dir_list
 
-    def is_pos_free(self, pos):
+    def is_pos_free(self, pos: npt.NDArray) -> bool:
         """Check if a given position is free (not occupied by any module).
 
         Args:
@@ -143,7 +144,7 @@ class Assembly:
                 return False
         return True
 
-    def get_module_by_pos(self, pos):
+    def get_module_by_pos(self, pos: npt.NDArray) -> int:
         """Get the module at a given position, if any.
 
         Args:
@@ -154,5 +155,5 @@ class Assembly:
         """
         for module in self.modules.values():
             if np.array_equal(module.pos, pos):
-                return module
+                return module.cube_id
         return None

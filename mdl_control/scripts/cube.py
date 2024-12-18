@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
 import numpy as np
+import numpy.typing as npt
 from scipy.spatial.transform import Rotation as R
 
 
 class Cube:
-    def __init__(self, cube_id, pos, attitude):
+    def __init__(self, cube_id: int, pos: npt.NDArray, attitude: npt.NDArray):
         """
         :param cube_id:         cube ID
         :param pos:             cube position np.array([x, y, z])
@@ -21,24 +22,24 @@ class Cube:
         self.m_size = 0.12
 
     @staticmethod
-    def validate_id(cube_id):
+    def validate_id(cube_id: int) -> int:
         if cube_id is None or cube_id < 0:
             raise ValueError('invalid cube_id')
         return cube_id
 
     @staticmethod
-    def validate_position(pos):
+    def validate_position(pos: npt.NDArray) -> npt.NDArray:
         if pos is None or len(pos) != 3:
             raise ValueError('invalid pos')
         return np.array(pos)
 
     @staticmethod
-    def validate_attitude(attitude):
+    def validate_attitude(attitude: npt.NDArray) -> npt.NDArray:
         if attitude is None or len(attitude) != 4:
             raise ValueError('invalid attitude')
         return np.array(attitude)
 
-    def set_module_type(self, module_type):
+    def set_module_type(self, module_type: str):
         self.module_type = module_type
 
         if module_type == 'active_6_passive_0':
@@ -122,18 +123,18 @@ class Cube:
         else:
             raise ValueError(f"Invalid module type: {module_type}")
 
-    def set_connector(self, face, connector_type, mode=None):
+    def set_connector(self, face: int, connector_type: str, mode: str = None):
         """
         setting connector type and mode
         :param face:            0-5
         :param connector_type:  'active' or 'passive' or 'cannot_connect'
-        :param mode:            'male' or 'female' if connector_type is 'active'
+        :param mode:            'male'or'female' if connector_type is 'active'
         """
         self.connectors[face]['type'] = connector_type
         if connector_type == 'active':
             self.connectors[face]['mode'] = mode
 
-    def change_active_connector_mode(self, face, mode):
+    def change_active_connector_mode(self, face: int, mode: str):
         """
         change active connector mode
         :param face:    0-5
@@ -144,7 +145,7 @@ class Cube:
         elif self.connectors[face]['type'] == 'active':
             self.connectors[face]['mode'] = mode
 
-    def get_connector(self, face):
+    def get_connector(self, face: int) -> dict:
         """
         指定された面の結合面情報を取得する
         :param face: 面 (0-5)
@@ -162,7 +163,7 @@ class Cube:
             'attitude': self.attitude
         }
 
-    def rotate(self, rotation_matrix):
+    def rotate(self, rotation_matrix: npt.NDArray):
         """
         任意の回転行列を使用してキューブの姿勢を変化させる
         :param rotation_matrix: 3x3の回転行列
