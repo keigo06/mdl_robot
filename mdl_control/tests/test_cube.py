@@ -1,7 +1,9 @@
+#!/usr/bin/env python3
+
 from scripts.cube import Cube
 import pytest
-import numpy as np
 
+import numpy as np
 from scipy.spatial.transform import Rotation as R
 
 
