@@ -1,4 +1,4 @@
-from src.cube import Cube
+from scripts.cube import Cube
 import pytest
 import numpy as np
 
