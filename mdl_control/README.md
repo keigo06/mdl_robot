@@ -1,6 +1,17 @@
 
 # mdl_control
 
+## setup
+
+- need to install setup.py for pytest
+
+```bash
+cd ~/mdl_ros2_ws
+. .venv/bin/activate
+cd cd src/mdl_robot/mdl_control
+pip install -e .
+```
+
 ## tutorial
 
 ```bash
