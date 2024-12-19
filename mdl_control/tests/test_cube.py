@@ -13,7 +13,7 @@ def test_cube_initialization():
     assert np.array_equal(cube.pos, np.array([0, 0, 0]))
     assert np.array_equal(cube.attitude, np.array([0, 0, 0, 1]))
     assert len(cube.connectors) == 6
-    assert cube.module_type == 'active_6_passive_0'
+    assert cube.cube_type == 'active_6_passive_0'
 
 
 def test_validate_id():
@@ -42,16 +42,16 @@ def test_validate_attitude():
         np.array([0, 0, 0, 1])), np.array([0, 0, 0, 1]))
 
 
-def test_set_module_type_active_6_passive_0():
+def test_set_cube_type_active_6_passive_0():
     cube = Cube(1, np.array([0, 0, 0]), np.array([0, 0, 0, 1]))
-    cube.set_module_type('active_6_passive_0')
+    cube.set_cube_type('active_6_passive_0')
     assert all(connector['type'] == 'active' for connector in cube.connectors)
     assert all(connector['mode'] == 'female' for connector in cube.connectors)
 
 
-def test_set_module_type_active_5_passive_1():
+def test_set_cube_type_active_5_passive_1():
     cube = Cube(1, np.array([0, 0, 0]), np.array([0, 0, 0, 1]))
-    cube.set_module_type('active_5_passive_1')
+    cube.set_cube_type('active_5_passive_1')
     assert cube.connectors[0]['type'] == 'passive'
     assert cube.connectors[0]['mode'] is None
     assert all(connector['type'] ==
@@ -60,9 +60,9 @@ def test_set_module_type_active_5_passive_1():
                'female' for connector in cube.connectors[1:])
 
 
-def test_set_module_type_active_4_passive_2_near():
+def test_set_cube_type_active_4_passive_2_near():
     cube = Cube(1, np.array([0, 0, 0]), np.array([0, 0, 0, 1]))
-    cube.set_module_type('active_4_passive_2_near')
+    cube.set_cube_type('active_4_passive_2_near')
     assert all(connector['type'] ==
                'passive' for connector in cube.connectors[:2])
     assert all(connector['mode'] is None for connector in cube.connectors[:2])
@@ -72,9 +72,9 @@ def test_set_module_type_active_4_passive_2_near():
                'male' for connector in cube.connectors[2:])
 
 
-def test_set_module_type_active_4_passive_2_opposite():
+def test_set_cube_type_active_4_passive_2_opposite():
     cube = Cube(1, np.array([0, 0, 0]), np.array([0, 0, 0, 1]))
-    cube.set_module_type('active_4_passive_2_opposite')
+    cube.set_cube_type('active_4_passive_2_opposite')
     assert cube.connectors[0]['type'] == 'passive'
     assert cube.connectors[0]['mode'] is None
     assert cube.connectors[1]['type'] == 'active'
@@ -89,9 +89,9 @@ def test_set_module_type_active_4_passive_2_opposite():
     assert cube.connectors[5]['mode'] == 'female'
 
 
-def test_set_module_type_active_3_passive_3_near():
+def test_set_cube_type_active_3_passive_3_near():
     cube = Cube(1, np.array([0, 0, 0]), np.array([0, 0, 0, 1]))
-    cube.set_module_type('active_3_passive_3_near')
+    cube.set_cube_type('active_3_passive_3_near')
     assert all(connector['type'] ==
                'active' for connector in cube.connectors[:3])
     assert all(connector['mode'] ==
@@ -101,9 +101,9 @@ def test_set_module_type_active_3_passive_3_near():
     assert all(connector['mode'] is None for connector in cube.connectors[3:])
 
 
-def test_set_module_type_active_3_passive_3_konoji():
+def test_set_cube_type_active_3_passive_3_konoji():
     cube = Cube(1, np.array([0, 0, 0]), np.array([0, 0, 0, 1]))
-    cube.set_module_type('active_3_passive_3_konoji')
+    cube.set_cube_type('active_3_passive_3_konoji')
     assert cube.connectors[0]['type'] == 'active'
     assert cube.connectors[0]['mode'] == 'female'
     assert cube.connectors[1]['type'] == 'active'
@@ -118,9 +118,9 @@ def test_set_module_type_active_3_passive_3_konoji():
     assert cube.connectors[5]['mode'] is None
 
 
-def test_set_module_type_active_2_passive_4_near():
+def test_set_cube_type_active_2_passive_4_near():
     cube = Cube(1, np.array([0, 0, 0]), np.array([0, 0, 0, 1]))
-    cube.set_module_type('active_2_passive_4_near')
+    cube.set_cube_type('active_2_passive_4_near')
     assert all(connector['type'] ==
                'active' for connector in cube.connectors[:2])
     assert all(connector['mode'] ==
@@ -130,9 +130,9 @@ def test_set_module_type_active_2_passive_4_near():
     assert all(connector['mode'] is None for connector in cube.connectors[2:])
 
 
-def test_set_module_type_active_2_passive_4_opposite():
+def test_set_cube_type_active_2_passive_4_opposite():
     cube = Cube(1, np.array([0, 0, 0]), np.array([0, 0, 0, 1]))
-    cube.set_module_type('active_2_passive_4_opposite')
+    cube.set_cube_type('active_2_passive_4_opposite')
     assert cube.connectors[0]['type'] == 'active'
     assert cube.connectors[0]['mode'] == 'female'
     assert cube.connectors[1]['type'] == 'passive'
@@ -147,9 +147,9 @@ def test_set_module_type_active_2_passive_4_opposite():
     assert cube.connectors[5]['mode'] is None
 
 
-def test_set_module_type_active_1_passive_5():
+def test_set_cube_type_active_1_passive_5():
     cube = Cube(1, np.array([0, 0, 0]), np.array([0, 0, 0, 1]))
-    cube.set_module_type('active_1_passive_5')
+    cube.set_cube_type('active_1_passive_5')
     assert cube.connectors[0]['type'] == 'active'
     assert cube.connectors[0]['mode'] == 'female'
     assert all(connector['type'] ==
@@ -157,9 +157,9 @@ def test_set_module_type_active_1_passive_5():
     assert all(connector['mode'] is None for connector in cube.connectors[1:])
 
 
-def test_set_module_type_active_0_passive_6():
+def test_set_cube_type_active_0_passive_6():
     cube = Cube(1, np.array([0, 0, 0]), np.array([0, 0, 0, 1]))
-    cube.set_module_type('active_0_passive_6')
+    cube.set_cube_type('active_0_passive_6')
     assert all(connector['type'] == 'passive' for connector in cube.connectors)
     assert all(connector['mode'] is None for connector in cube.connectors)
 

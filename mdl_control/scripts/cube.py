@@ -15,9 +15,9 @@ class Cube:
         self.cube_id = self.validate_id(cube_id)
         self.pos = self.validate_position(pos)
         self.attitude = self.validate_attitude(attitude)
-        self.module_type = 'active_6_passive_0'
+        self.cube_type = 'active_6_passive_0'
         self.connectors = []
-        self.set_module_type(self.module_type)
+        self.set_cube_type(self.cube_type)
 
         self.m_size = 0.12
 
@@ -39,29 +39,29 @@ class Cube:
             raise ValueError('invalid attitude')
         return np.array(attitude)
 
-    def set_module_type(self, module_type: str):
-        self.module_type = module_type
+    def set_cube_type(self, cube_type: str):
+        self.cube_type = cube_type
 
-        if module_type == 'active_6_passive_0':
+        if cube_type == 'active_6_passive_0':
             # 6 faces: active / 0 faces: passive
             self.connectors =\
                 [{'type': 'active', 'mode': 'female'} for _ in range(6)]
 
-        elif module_type == 'active_5_passive_1':
+        elif cube_type == 'active_5_passive_1':
             # 5 faces: active / 1 faces: passive
             self.connectors =\
                 [{'type': 'passive', 'mode': None}]
             self.connectors.extend(
                 [{'type': 'active', 'mode': 'female'} for _ in range(5)])
 
-        elif module_type == 'active_4_passive_2_near':
+        elif cube_type == 'active_4_passive_2_near':
             # 4 faces: active / 2 faces(near): passive
             self.connectors =\
                 [{'type': 'passive', 'mode': None} for _ in range(2)]
             self.connectors.extend(
                 [{'type': 'active', 'mode': 'male'} for _ in range(4)])
 
-        elif module_type == 'active_4_passive_2_opposite':
+        elif cube_type == 'active_4_passive_2_opposite':
             # 4 faces: active / 2 faces(opposite): passive
             self.connectors =\
                 [{'type': 'passive', 'mode': None}]
@@ -72,14 +72,14 @@ class Cube:
             self.connectors.extend(
                 [{'type': 'active', 'mode': 'female'} for _ in range(2)])
 
-        elif module_type == 'active_3_passive_3_near':
+        elif cube_type == 'active_3_passive_3_near':
             # 3 faces(near): active / 3 faces: passive
             self.connectors =\
                 [{'type': 'active', 'mode': 'female'} for _ in range(3)]
             self.connectors.extend(
                 [{'type': 'passive', 'mode': None} for _ in range(3)])
 
-        elif module_type == 'active_3_passive_3_konoji':
+        elif cube_type == 'active_3_passive_3_konoji':
             # 3 faces(konoji): active / 3 faces: passive
             self.connectors =\
                 [{'type': 'active', 'mode': 'female'} for _ in range(2)]
@@ -90,14 +90,14 @@ class Cube:
             self.connectors.extend(
                 [{'type': 'passive', 'mode': None}])
 
-        elif module_type == 'active_2_passive_4_near':
+        elif cube_type == 'active_2_passive_4_near':
             # 2 faces(near): active / 4 faces: passive
             self.connectors =\
                 [{'type': 'active', 'mode': 'female'} for _ in range(2)]
             self.connectors.extend(
                 [{'type': 'passive', 'mode': None} for _ in range(4)])
 
-        elif module_type == 'active_2_passive_4_opposite':
+        elif cube_type == 'active_2_passive_4_opposite':
             # 2 faces(opposite): active / 4 faces: passive
             self.connectors =\
                 [{'type': 'active', 'mode': 'female'}]
@@ -108,20 +108,20 @@ class Cube:
             self.connectors.extend(
                 [{'type': 'passive', 'mode': None} for _ in range(2)])
 
-        elif module_type == 'active_1_passive_5':
+        elif cube_type == 'active_1_passive_5':
             # 1 face: active / 5 faces: passive
             self.connectors =\
                 [{'type': 'active', 'mode': 'female'}]
             self.connectors.extend(
                 [{'type': 'passive', 'mode': None} for _ in range(5)])
 
-        elif module_type == 'active_0_passive_6':
+        elif cube_type == 'active_0_passive_6':
             # 0 faces: active / 6 faces: passive
             self.connectors =\
                 [{'type': 'passive', 'mode': None} for _ in range(6)]
 
         else:
-            raise ValueError(f"Invalid module type: {module_type}")
+            raise ValueError(f"Invalid cube type: {cube_type}")
 
     def set_connector(self, face: int, connector_type: str, mode: str = None):
         """
