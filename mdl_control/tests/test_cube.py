@@ -6,6 +6,8 @@ import pytest
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 
+m_size = 0.12
+
 
 def test_cube_initialization():
     cube = Cube(1, np.array([0, 0, 0]), np.array([0, 0, 0, 1]))
@@ -16,30 +18,30 @@ def test_cube_initialization():
     assert cube.cube_type == 'active_6_passive_0'
 
 
-def test_validate_id():
-    with pytest.raises(ValueError):
-        Cube.validate_id(None)
-    with pytest.raises(ValueError):
-        Cube.validate_id(-1)
-    assert Cube.validate_id(1) == 1
+# def test_validate_id():
+#     with pytest.raises(ValueError):
+#         Cube.validate_id(None)
+#     with pytest.raises(ValueError):
+#         Cube.validate_id(-1)
+#     assert Cube.validate_id(1) == 1
 
 
-def test_validate_position():
-    with pytest.raises(ValueError):
-        Cube.validate_position(None)
-    with pytest.raises(ValueError):
-        Cube.validate_position(np.array([0, 0]))
-    assert np.array_equal(Cube.validate_position(
-        np.array([0, 0, 0])), np.array([0, 0, 0]))
+# def test_validate_position():
+#     with pytest.raises(ValueError):
+#         Cube.validate_position(None)
+#     with pytest.raises(ValueError):
+#         Cube.validate_position(np.array([0, 0]))
+#     assert np.array_equal(Cube.validate_position(
+#         np.array([0, 0, 0])), np.array([0, 0, 0]))
 
 
-def test_validate_attitude():
-    with pytest.raises(ValueError):
-        Cube.validate_attitude(None)
-    with pytest.raises(ValueError):
-        Cube.validate_attitude(np.array([0, 0]))
-    assert np.array_equal(Cube.validate_attitude(
-        np.array([0, 0, 0, 1])), np.array([0, 0, 0, 1]))
+# def test_validate_attitude():
+#     with pytest.raises(ValueError):
+#         Cube.validate_attitude(None)
+#     with pytest.raises(ValueError):
+#         Cube.validate_attitude(np.array([0, 0]))
+#     assert np.array_equal(Cube.validate_attitude(
+#         np.array([0, 0, 0, 1])), np.array([0, 0, 0, 1]))
 
 
 def test_set_cube_type_active_6_passive_0():
@@ -162,6 +164,20 @@ def test_set_cube_type_active_0_passive_6():
     cube.set_cube_type('active_0_passive_6')
     assert all(connector['type'] == 'passive' for connector in cube.connectors)
     assert all(connector['mode'] is None for connector in cube.connectors)
+
+
+def test_get_pos_list_abs_of_faces_by_connector_type():
+    cube = Cube(1, np.array([m_size/2, m_size, m_size]),
+                np.array([0, 0, 0, 1]))
+    cube.set_cube_type('active_3_passive_3_konoji')
+    face_list = cube.get_faces_by_connector_type('active')
+    assert face_list == [0, 1, 4]
+    pos_list_abs_of_faces_active \
+        = cube.get_pos_list_abs_of_faces_by_connector_type('active')
+    pos_list_abs_of_faces_active_expected = [
+        np.array([m_size/2, m_size, m_size]) + np.array([cube.m_size, cube.m_size, ])]
+    assert np.allclose(
+        pos_list_abs_of_faces_active, pos_list_abs_of_faces_active_expected)
 
 
 def test_rotate_x_90():

@@ -7,10 +7,12 @@ from scipy.spatial.transform import Rotation as R
 
 class Cube:
     def __init__(self, cube_id: int, pos: npt.NDArray, attitude: npt.NDArray):
-        """
-        :param cube_id:         cube ID
-        :param pos:             cube position np.array([x, y, z])
-        :param attitude:        cube attitude quaternion np.array([x, y, z, w])
+        """Cube class
+
+        Args:
+            cube_id (int): cube id
+            pos (npt.NDArray): position (x, y, z)
+            attitude (npt.NDArray): quaternion (x, y, z, w)
         """
         self.m_size = 0.12
         self.cube_id: int = self.validate_id(cube_id)
@@ -19,6 +21,12 @@ class Cube:
         self.cube_type: str = 'active_6_passive_0'
         self.connectors: list[dict] = []
         self.set_cube_type(self.cube_type)
+        self.unit_vectors: list[npt.NDArray] = [
+            *np.eye(3),
+            *-np.eye(3)
+        ]
+
+        # self.face_list_of_active: li
 
     @staticmethod
     def validate_id(cube_id: int) -> int:
@@ -123,85 +131,119 @@ class Cube:
             raise ValueError(f"Invalid cube type: {cube_type}")
 
     def set_connector(self, face: int, connector_type: str, mode: str = None):
-        """
-        setting connector type and mode
-        :param face:            0-5
-        :param connector_type:  'active' or 'passive' or 'cannot_connect'
-        :param mode:            'male'or'female' if connector_type is 'active'
+        """ Set connector type and mode
+        Args:
+            face (int): 0-5
+            connector_type (str): 'active' or 'passive' or 'cannot_connect'
+            mode (str): 'male' or 'female' or None
         """
         self.connectors[face]['type'] = connector_type
         if connector_type == 'active':
             self.connectors[face]['mode'] = mode
 
     def change_active_connector_mode(self, face: int, mode: str):
-        """
-        change active connector mode
-        :param face:    0-5
-        :param mode:    'male' or 'female'
+        """ Change active connector mode
+        Args:
+            face (int): 0-5
+            mode: 'male' or 'female'
         """
         if mode not in ['male', 'female']:
             raise ValueError(f"Invalid mode: {mode}")
         elif self.connectors[face]['type'] == 'active':
             self.connectors[face]['mode'] = mode
 
-    def get_connector(self, face: int) -> dict:
+    def get_faces_by_connector_type(self, connector_type: str) -> list[int]:
+        """ Get faces of specified connector type
+
+        Args:
+            connector_type (str): 'active' or 'passive' or 'cannot_connect'
+
+        Returns:
+            list[int]: A list of faces of specified connector type
         """
-        指定された面の結合面情報を取得する
-        :param face: 面 (0-5)
-        :return: connector情報
+        return [face_id for face_id, connector in enumerate(self.connectors) if connector['type'] == connector_type]
+
+    # def update_face_vector(self, face_id: int) -> npt.NDArray:
+    #     """ Get unit vector of face
+
+    #     Args:
+    #         face_id (int): 0-5
+
+    #     Returns:
+    #         npt.NDArray: Unit vector of face
+    #     """
+    #     unit_vector_abs = self.get_vector_abs_coordinate(self.unit_vectors)
+
+    def get_vector_abs_coordinate(self, vector: npt.NDArray) -> npt.NDArray:
+        """Change the relative coordinate to the absolute coordinate.
+
+        Args:
+            vector (npt.NDArray): The vector in the relative coordinate.
+
+        Returns:
+            npt.NDArray: The vector in the absolute coordinate.
         """
-        return self.connectors[face]
+
+        return np.dot(R.from_quat(self.attitude).as_matrix(), vector)
+
+    def get_pos_list_abs_of_faces_by_connector_type(self, connector_type: str) -> list[npt.NDArray]:
+        """ Get positions of faces of specified connector type in the absolute coordinate
+
+        Args:
+            connector_type (str): 'active' or 'passive' or 'cannot_connect'
+
+        Returns:
+            list[npt.NDArray]: A list of positions of faces of specified connector type in the absolute coordinate
+        """
+
+        return [self.pos + self.get_vector_abs_coordinate(
+            self.unit_vectors[face_id]) * self.m_size for face_id in self.get_faces_by_connector_type(connector_type)]
 
     def get_state(self):
-        """
-        キューブの現在の状態（位置と姿勢）を返す
-        :return: 現在の位置と姿勢を辞書形式で返す
-        """
         return {
             'pos': self.pos,
             'attitude': self.attitude
         }
 
     def rotate(self, rotation_matrix: npt.NDArray):
-        """
-        任意の回転行列を使用してキューブの姿勢を変化させる
-        :param rotation_matrix: 3x3の回転行列
+        """ Rotate the cube
+        Args:
+            rotation_matrix (npt.NDArray): 3x3 rotation
         """
         r = R.from_matrix(rotation_matrix)
         new_attitude = r * R.from_quat(self.attitude)
         self.attitude = new_attitude.as_quat()
 
     def rotate_x_90(self):
-        """
-        x軸に対して90度回転させる
+        """ Rotate the cube 90 degrees around the x-axis
         """
         rotation_matrix = R.from_euler('x', 90, degrees=True).as_matrix()
         self.rotate(rotation_matrix)
 
     def rotate_x_minus_90(self):
-        """
-        x軸に対して-90度回転させる
+        """ Rotate the cube -90 degrees around the x-axis
         """
         rotation_matrix = R.from_euler('x', -90, degrees=True).as_matrix()
         self.rotate(rotation_matrix)
 
     def rotate_y_90(self):
-        """
-        y軸に対して90度回転させる
+        """ Rotate the cube 90 degrees around the y-axis
         """
         rotation_matrix = R.from_euler('y', 90, degrees=True).as_matrix()
         self.rotate(rotation_matrix)
 
     def rotate_y_minus_90(self):
-        """
-        y軸に対して-90度回転させる
+        """ Rotate the cube -90 degrees around the y-axis
         """
         rotation_matrix = R.from_euler('y', -90, degrees=True).as_matrix()
         self.rotate(rotation_matrix)
 
     def rotate_z_180(self):
-        """
-        z軸に対して180度回転させる
+        """ Rotate the cube 180 degrees around the z-axis
         """
         rotation_matrix = R.from_euler('z', 180, degrees=True).as_matrix()
         self.rotate(rotation_matrix)
+
+
+if __name__ == "__main__":
+    cube = Cube(cube_id=0, pos=[0, 0, 0], attitude=[0, 0, 0, 1])
