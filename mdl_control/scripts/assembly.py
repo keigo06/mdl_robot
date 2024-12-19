@@ -37,10 +37,6 @@ class Assembly:
             [0, 0, -1]
         ])
         self.m_size: int = 0.12
-        # self.m_size = Cube(0, np.array(
-        #     [0, 0, 0]), np.array([0, 0, 0, 1])).m_size
-        # logger.debug(f"m_size: {self.m_size}")
-        # print(f"m_size: {self.m_size}")
 
     # def create_line_assembly(self):
     #     """Create an assembly of cubes arranged in a straight line."""
@@ -70,20 +66,20 @@ class Assembly:
     #             self.cubes[i * grid_x + j].set_cube_type(
     #                 'active_6_passive_0')
 
-    # def find_factors(self, n: int) -> list:
-    #     """Return a list of factors of n.
+    def find_factors(self, n: int) -> list:
+        """Return a list of factors of n.
 
-    #     Args:
-    #         n (int): The number to find factors of.
+        Args:
+            n (int): The number to find factors of.
 
-    #     Returns:
-    #         list: A list of tuples, each containing a pair of factors.
-    #     """
-    #     factors = []
-    #     for i in range(1, int(np.sqrt(n)) + 1):
-    #         if n % i == 0:
-    #             factors.append((i, n // i))
-    #     return factors
+        Returns:
+            list: A list of tuples, each containing a pair of factors.
+        """
+        factors = []
+        for i in range(1, int(np.sqrt(n)) + 1):
+            if n % i == 0:
+                factors.append((i, n // i))
+        return factors
 
     def create_cubic_assembly(self):
         """Create an assembly of cubes arranged in a cube.
@@ -103,25 +99,25 @@ class Assembly:
                     )
                     self.cubes[cube_id].set_cube_type('active_6_passive_0')
 
-    # def get_outermost_cube_ids(self) -> list[int]:
-    #     """Get the IDs of the outermost cubes in the assembly.
+    def get_outermost_cube_ids(self) -> list[int]:
+        """Get the IDs of the outermost cubes in the assembly.
 
-    #     Returns:
-    #         list: A list of IDs of the outermost cubes.
-    #     """
-    #     outermost_cube_ids: list[int] = []
-    #     cube_positions: set[int] = set(tuple(cube.pos)
-    #                                      for cube in self.cubes.values())
-    #     for cube_id, cube in self.cubes.items():
-    #         is_outermost: bool = False
-    #         for direction in self.unit_vector:
-    #             pos_near_asm_possible = tuple(cube.pos + direction*self.m_size)
-    #             if pos_near_asm_possible not in cube_positions:
-    #                 is_outermost = True
-    #                 break
-    #         if is_outermost:
-    #             outermost_cube_ids.append(cube_id)
-    #     return outermost_cube_ids
+        Returns:
+            list: A list of IDs of the outermost cubes.
+        """
+        outermost_cube_ids: list[int] = []
+        cube_positions: set[int] = set(tuple(cube.pos)
+                                       for cube in self.cubes.values())
+        for cube_id, cube in self.cubes.items():
+            is_outermost: bool = False
+            for direction in self.unit_vector:
+                pos_near_asm_possible = tuple(cube.pos + direction*self.m_size)
+                if pos_near_asm_possible not in cube_positions:
+                    is_outermost = True
+                    break
+            if is_outermost:
+                outermost_cube_ids.append(cube_id)
+        return outermost_cube_ids
 
     # def get_near_asm_pos(self) -> list[npt.NDArray]:
     #     """Get positions near the assembly that are free.
