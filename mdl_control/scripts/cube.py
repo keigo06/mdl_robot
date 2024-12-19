@@ -12,14 +12,13 @@ class Cube:
         :param pos:             cube position np.array([x, y, z])
         :param attitude:        cube attitude quaternion np.array([x, y, z, w])
         """
-        self.cube_id = self.validate_id(cube_id)
-        self.pos = self.validate_position(pos)
-        self.attitude = self.validate_attitude(attitude)
-        self.cube_type = 'active_6_passive_0'
-        self.connectors = []
-        self.set_cube_type(self.cube_type)
-
         self.m_size = 0.12
+        self.cube_id: int = self.validate_id(cube_id)
+        self.pos: npt.NDArray = self.validate_position(pos)
+        self.attitude: npt.NDArray = self.validate_attitude(attitude)
+        self.cube_type: str = 'active_6_passive_0'
+        self.connectors: list[dict] = []
+        self.set_cube_type(self.cube_type)
 
     @staticmethod
     def validate_id(cube_id: int) -> int:
@@ -40,7 +39,7 @@ class Cube:
         return np.array(attitude)
 
     def set_cube_type(self, cube_type: str):
-        self.cube_type = cube_type
+        self.cube_type: str = cube_type
 
         if cube_type == 'active_6_passive_0':
             # 6 faces: active / 0 faces: passive

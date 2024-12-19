@@ -36,7 +36,8 @@ class Assembly:
             [0, 0, 1],
             [0, 0, -1]
         ])
-        self.m_size: int = 0.12
+        self.m_size: float = Cube.m_size
+        # self.m_size: int = 0.12
 
     # def create_line_assembly(self):
     #     """Create an assembly of cubes arranged in a straight line."""
@@ -85,12 +86,12 @@ class Assembly:
         """Create an assembly of cubes arranged in a cube.
         for example, if num_cubes = 27, it creates a 3x3x3 assembly.
         """
-        side_length: int = int(round(self.num_cubes ** (1/3)))
-        for x in range(side_length):
-            for y in range(side_length):
-                for z in range(side_length):
+        side_num_cubes: int = int(round(self.num_cubes ** (1/3)))
+        for x in range(side_num_cubes):
+            for y in range(side_num_cubes):
+                for z in range(side_num_cubes):
                     cube_id =\
-                        x * side_length * side_length + y * side_length + z
+                        x * side_num_cubes * side_num_cubes + y * side_num_cubes + z
                     self.cubes[cube_id] = Cube(
                         cube_id=cube_id,
                         pos=np.array([
@@ -106,8 +107,8 @@ class Assembly:
             list: A list of IDs of the outermost cubes.
         """
         outermost_cube_ids: list[int] = []
-        cube_positions: set[int] = set(tuple(cube.pos)
-                                       for cube in self.cubes.values())
+        cube_positions: set[npt.NDArray] = set(tuple(cube.pos)
+                                               for cube in self.cubes.values())
         for cube_id, cube in self.cubes.items():
             is_outermost: bool = False
             for direction in self.unit_vector:
@@ -119,21 +120,22 @@ class Assembly:
                 outermost_cube_ids.append(cube_id)
         return outermost_cube_ids
 
-    # def get_near_asm_pos(self) -> list[npt.NDArray]:
-    #     """Get positions near the assembly that are free.
+    def get_near_asm_pos(self) -> list[npt.NDArray]:
+        """Get positions near the assembly that are free.
 
-    #     Returns:
-    #         list: A list of positions near the assembly that are free.
-    #     """
-    #     pos_list_near_asm = []
+        Returns:
+            list: A list of positions near the assembly that are free.
+        """
+        pos_list_near_asm: list[npt.NDArray] = []
 
-    #     for cube in self.cubes.values():
-    #         for direction in self.unit_vector:
-    #             pos_near_asm_possible = cube.pos + direction
-    #             if self.is_pos_free(pos_near_asm_possible):
-    #                 pos_list_near_asm.append(pos_near_asm_possible)
+        for cube in self.cubes.values():
+            for direction in self.unit_vector:
+                pos_near_asm_possible: npt.NDArray \
+                    = cube.pos + direction*self.m_size
+                if self.is_pos_free(pos_near_asm_possible):
+                    pos_list_near_asm.append(pos_near_asm_possible)
 
-    #     return pos_list_near_asm
+        return pos_list_near_asm
 
     # def get_able_connect_dir(self, id, pos):
     #     """Get the directions in which a cube can connect at a given position.
@@ -160,19 +162,19 @@ class Assembly:
 
     #     return dir_list
 
-    # def is_pos_free(self, pos: npt.NDArray) -> bool:
-    #     """Check if a given position is free (not occupied by any cube).
+    def is_pos_free(self, pos: npt.NDArray) -> bool:
+        """Check if a given position is free (not occupied by any cube).
 
-    #     Args:
-    #         pos (np.array): The position to check.
+        Args:
+            pos (np.array): The position to check.
 
-    #     Returns:
-    #         bool: True if the position is free, False otherwise.
-    #     """
-    #     for cube in self.cubes.values():
-    #         if np.array_equal(cube.pos, pos):
-    #             return False
-    #     return True
+        Returns:
+            bool: True if the position is free, False otherwise.
+        """
+        for cube in self.cubes.values():
+            if np.array_equal(cube.pos, pos):
+                return False
+        return True
 
     # def get_cube_by_pos(self, pos: npt.NDArray) -> int:
     #     """Get the cube at a given position, if any.
