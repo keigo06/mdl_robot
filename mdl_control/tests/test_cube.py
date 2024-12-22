@@ -175,7 +175,12 @@ def test_get_pos_list_abs_of_faces_by_connector_type():
     pos_list_abs_of_faces_active \
         = cube.get_pos_list_abs_of_faces_by_connector_type('active')
     pos_list_abs_of_faces_active_expected = [
-        np.array([m_size/2, m_size, m_size]) + np.array([cube.m_size, cube.m_size, ])]
+        np.array([m_size/2, m_size, m_size]) + np.array([cube.m_size/2, 0, 0]),
+        np.array([m_size/2, m_size, m_size]) + np.array([0, cube.m_size/2, 0]),
+        np.array([m_size/2, m_size, m_size]) +
+        np.array([0, -cube.m_size/2, 0]),]
+    print(pos_list_abs_of_faces_active)
+    print(pos_list_abs_of_faces_active_expected)
     assert np.allclose(
         pos_list_abs_of_faces_active, pos_list_abs_of_faces_active_expected)
 

@@ -40,6 +40,9 @@ class Assembly:
         self.m_size: float = cube.m_size
         logger.debug("m_size: %f", self.m_size)
 
+        self.robot_base_pos: npt.NDArray = np.array([0.0, 0.0, 0.0])
+        # TODO: 今は一時的にactionを行った場所のpos
+
     def create_line_assembly(self):
         """Create an assembly of cubes arranged in a straight line."""
         for id in range(self.num_cubes):
@@ -128,6 +131,18 @@ class Assembly:
                 outermost_cube_ids.append(cube_id)
         return outermost_cube_ids
 
+    def get_reachable_module_ids(self) -> list[int]:
+        """Get the IDs of the cubes that can be reached from the robot base.
+
+        Returns:
+            list: A list of IDs of the reachable cubes.
+        """
+        reachable_cube_ids: list[int] = []
+        for cube in self.cubes.values():
+            if np.linalg.norm(cube.pos - self.robot_base_pos) < 0.5:
+                reachable_cube_ids.append(cube.cube_id)
+        return reachable_cube_ids
+
     def get_near_asm_pos(self) -> list[npt.NDArray]:
         """Get positions near the assembly that are free.
 
@@ -145,30 +160,30 @@ class Assembly:
 
         return pos_list_near_asm
 
-    def get_able_connect_dir(self, id, pos):
-        """Get the directions in which a cube can connect at a given position.
+    # def get_able_connect_dir(self, id, pos):
+    #     """Get the directions in which a cube can connect at a given position.
 
-        Args:
-            id (int): The ID of the cube.
-            pos (np.array): The position to check for possible connections.
+    #     Args:
+    #         id (int): The ID of the cube.
+    #         pos (np.array): The position to check for possible connections.
 
-        Returns:
-            list: A list of directions in which the cube can connect.
-        """
-        dir_list = []
+    #     Returns:
+    #         list: A list of directions in which the cube can connect.
+    #     """
+    #     dir_list = []
 
-        for direction in self.unit_vector:
-            near_pos = pos + direction
-            near_cube = self.get_cube_by_pos(near_pos)
+    #     for direction in self.unit_vector:
+    #         near_pos = pos + direction
+    #         near_cube = self.get_cube_by_pos(near_pos)
 
-            if near_cube is not None:
-                near_target_pos = near_cube.get_male_targets_pos_abs()
+    #         if near_cube is not None:
+    #             near_target_pos = near_cube.get_male_targets_pos_abs()
 
-                for pos_possible_self in near_target_pos:
-                    if np.array_equal(pos_possible_self, pos):
-                        dir_list.append(direction)
+    #             for pos_possible_self in near_target_pos:
+    #                 if np.array_equal(pos_possible_self, pos):
+    #                     dir_list.append(direction)
 
-        return dir_list
+    #     return dir_list
 
     def is_pos_free(self, pos: npt.NDArray) -> bool:
         """Check if a given position is free (not occupied by any cube).

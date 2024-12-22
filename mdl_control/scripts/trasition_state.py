@@ -2,6 +2,8 @@
 
 import copy
 import numpy as np
+import numpy.typing as npt
+from assembly import Assembly
 
 from logging import getLogger, basicConfig, DEBUG, INFO
 # import coloredlogs
@@ -14,14 +16,15 @@ basicConfig(
 
 
 class TransitionState:
-    def __init__(self, asm, pre_asm=None, action=None):
+    def __init__(self, asm: Assembly, pre_asm: Assembly = None, action=None):
+        # TODO: Set pre of robot
         if asm is None:
             logger.info("asm is None")
 
-        self.asm = asm
+        self.asm: Assembly = asm
         self.actions = []
-        self.pre_asm = pre_asm  # Pre-transition assembly state
-        self.action = action  # The action taken during the transition
+        self.pre_asm: Assembly = pre_asm  # Pre-transition assembly state
+        self.action = action              # The action taken during the transition
 
         if pre_asm is None:
             self.cost = 0
@@ -54,16 +57,19 @@ class TransitionState:
         return self.__hash__() == other.__hash__()
 
     def get_able_eliminate_modules_id(self):
-        return list(self.asm.cubes.keys())
+        id_list_reachable = self.asm.get_reachable_module_ids()
+        id_list_outmost = self.asm.get_outermost_cube_ids()
+        # TODO: Check connectivity
+        # TODO: Check robot IK
+        return id_list_outmost
 
-    def get_able_add_modules_pos(self, asm_eliminate, id):
-        pos_list_add = asm_eliminate.get_near_asm_pos()
-
-        for pos in pos_list_add:
-            asm_add = copy.deepcopy(asm_eliminate)
-            asm_add.cubes[id] = copy.deepcopy(asm_add.cubes[id])
-            asm_add.cubes[id].pos = pos
-
+    def get_able_add_modules_pos(self, asm_eliminate: Assembly, id: int) -> list[npt.NDArray]:
+        pos_list_reachable: list[npt.NDArray] \
+            = asm_eliminate.get_near_asm_pos()
+        pos_list_add: list[npt.NDArray] = asm_eliminate.get_near_asm_pos()
+        # TODO: Check connectivity
+        # TODO: Check connector direction and type
+        # TODO: Check robot IK
         return pos_list_add
 
     def get_able_actions(self):
@@ -97,9 +103,8 @@ class TransitionState:
 
     def eliminate_module(self, id):
         asm_eliminate = copy.deepcopy(self.asm)
-
         asm_eliminate.cubes.pop(id)
-
+        asm_eliminate.robot_base_pos = self.asm.cubes[id].pos
         return asm_eliminate
 
     def add_module(self, asm_eliminate, id, pos):
@@ -119,3 +124,17 @@ class TransitionState:
         asm_add = self.add_module(asm_eliminate, action["id"], action["pos"])
 
         return asm_add
+
+
+if __name__ == "__main__":
+    asm_first = Assembly(num_cubes=27)
+    asm_first.create_cubic_assembly()
+    state = TransitionState(asm_first)
+    id_list_eliminate_modules = state.get_able_eliminate_modules_id()
+    id_selected = id_list_eliminate_modules[0]
+    asm_eliminate = state.eliminate_module(id_selected)
+    print(asm_eliminate.cubes[1].pos)
+    pos_list_add: list[npt.NDArray] = state.get_able_add_modules_pos(
+        asm_eliminate, id_selected)
+    print(pos_list_add)
+    print(len(pos_list_add))

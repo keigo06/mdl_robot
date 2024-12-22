@@ -13,20 +13,50 @@ class Cube:
             cube_id (int): cube id
             pos (npt.NDArray): position (x, y, z)
             attitude (npt.NDArray): quaternion (x, y, z, w)
+
+        Attributes:
+            m_size (float):         size of the cube
+            cube_id (int):          cube id
+            pos (npt.NDArray):      position (x, y, z)
+            attitude (npt.NDArray): quaternion (x, y, z, w)
+            cube_type (str):        cube type
+
+            connectors (list[dict[str, str]]):
+            connectors[face_number]
+            = { 'type': 'active' or 'passive' or 'cannot_connect',
+                'mode': 'male' or 'female' or None
+                'pos_abs': npt.NDArray[],
+                'dir_abs': npt.NDArray[]
+            }
+
+            active_face_list (list[int]):   face numbers of active connectors
+            passive_face_list (list[int]):  face numbers of passive connectors
+
+            unit_vectors (list[npt.NDArray]):   unit vectors (not match with face number)
+
+        Examples:
+            cube.Cube(cube_id=0, pos=[0, 0, 0], attitude=[0, 0, 0, 1])
+            face_id = 0
+            cube.connectors [face_id]['type']           = 'active'
+            cube.connectors [face_id]['mode']           = 'male'
+            cube.connectors [face_id]['pos_abs']        = npt.NDArray[0.12, 0.0, 0.0]
+            cube.connectors [face_id]['dir_abs']        = npt.NDArray[1.0, 0.0, 0.0]
+            active_face_list = [0, 1, 2, 3, 4, 5]
+            passive_face_list = []
         """
         self.m_size = 0.12
         self.cube_id: int = self.validate_id(cube_id)
         self.pos: npt.NDArray = self.validate_position(pos)
         self.attitude: npt.NDArray = self.validate_attitude(attitude)
         self.cube_type: str = 'active_6_passive_0'
-        self.connectors: list[dict] = []
+        self.connectors: list[dict[str, str]] = []
         self.set_cube_type(self.cube_type)
         self.unit_vectors: list[npt.NDArray] = [
             *np.eye(3),
             *-np.eye(3)
         ]
-
-        # self.face_list_of_active: li
+        self.update_connectors_pos_abs()
+        self.update_connectors_dir_abs()
 
     @staticmethod
     def validate_id(cube_id: int) -> int:
@@ -141,6 +171,28 @@ class Cube:
         if connector_type == 'active':
             self.connectors[face]['mode'] = mode
 
+    def set_active_face_list(self):
+        """ Set active face list
+        """
+        self.active_face_list = self.get_faces_by_connector_type('active')
+
+    def update_connectors_pos_abs(self):
+        """ Update faces position in the absolute coordinate
+        """
+        rotation_matrix = R.from_quat(self.attitude).as_matrix()
+        unit_vectors_scaled = np.array(self.unit_vectors) * self.m_size/2
+        self.faces_pos \
+            = self.pos + np.dot(unit_vectors_scaled, rotation_matrix.T)
+        for face_id in range(6):
+            self.connectors[face_id]['pos_abs'] = self.faces_pos[face_id]
+
+    def update_connectors_dir_abs(self):
+        """ Update faces unit vectors in the absolute coordinate
+        """
+        for face_id in range(6):
+            self.connectors[face_id]['dir_abs'] \
+                = self.get_vector_abs_coordinate(self.unit_vectors[face_id])
+
     def change_active_connector_mode(self, face: int, mode: str):
         """ Change active connector mode
         Args:
@@ -159,20 +211,9 @@ class Cube:
             connector_type (str): 'active' or 'passive' or 'cannot_connect'
 
         Returns:
-            list[int]: A list of faces of specified connector type
+            list[int]: A list of face numbers of specified connector type
         """
         return [face_id for face_id, connector in enumerate(self.connectors) if connector['type'] == connector_type]
-
-    # def update_face_vector(self, face_id: int) -> npt.NDArray:
-    #     """ Get unit vector of face
-
-    #     Args:
-    #         face_id (int): 0-5
-
-    #     Returns:
-    #         npt.NDArray: Unit vector of face
-    #     """
-    #     unit_vector_abs = self.get_vector_abs_coordinate(self.unit_vectors)
 
     def get_vector_abs_coordinate(self, vector: npt.NDArray) -> npt.NDArray:
         """Change the relative coordinate to the absolute coordinate.
@@ -196,8 +237,9 @@ class Cube:
             list[npt.NDArray]: A list of positions of faces of specified connector type in the absolute coordinate
         """
 
-        return [self.pos + self.get_vector_abs_coordinate(
-            self.unit_vectors[face_id]) * self.m_size for face_id in self.get_faces_by_connector_type(connector_type)]
+        self.update_connectors_pos_abs()
+        return [self.connectors[face_id]['pos_abs']
+                for face_id in self.get_faces_by_connector_type(connector_type)]
 
     def get_state(self):
         return {

@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: mdl_control
+Version: 0.1.0
+Summary: modular robot control package
+Author: Keigo Torii
+Requires-Dist: networkx==3.4.2
+Requires-Dist: numpy==2.2.0
+Requires-Dist: scipy==1.14.1
