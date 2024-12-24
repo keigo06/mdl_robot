@@ -106,7 +106,7 @@ class Assembly:
     def change_cubes_to_network(self):
         """create networkx graph from cubes"""
         pass
-
+        # TODO: create networkx graph from cubes
         self.asm_graph.clear()
         for cube in self.cubes.values():
             self.asm_graph.add_node(cube.cube_id, pos=cube.pos)
@@ -115,31 +115,55 @@ class Assembly:
         """Get the IDs of the outermost cubes in the assembly.
 
         Args:
-            cube_ids (list[int], optional): List of cube IDs to check. Defaults to None.
+          cube_ids (list[int], optional): List of cube IDs to check. Defaults to None.
 
         Returns:
-            list: A list of IDs of the outermost cubes.
+          list: A list of IDs of the outermost cubes.
         """
-        outermost_cube_ids: list[int] = []
-        cube_positions: set[tuple] = set(tuple(cube.pos)
-                                         for cube in self.cubes.values())
         if cube_ids is None:
             cube_ids = list(self.cubes.keys())
+
+        outermost_cube_ids: list[int] = []
+        cube_positions: set[tuple] = {
+            tuple(cube.pos) for cube in self.cubes.values()}
+        # for cube_id in cube_ids:
+        #     cube = self.cubes[cube_id]
+        #     is_outermost: bool = False
+        #     for direction in self.unit_vectors:
+        #         pos_near_asm_possible = tuple(
+        #             cube.pos + direction * self.m_size)
+        #         if pos_near_asm_possible not in cube_positions:
+        #             is_outermost = True
+        #             break
+        #     if is_outermost:
+        #         outermost_cube_ids.append(cube_id)
         for cube_id in cube_ids:
             cube = self.cubes[cube_id]
-            is_outermost: bool = False
-            for direction in self.unit_vectors:
-                pos_near_asm_possible = tuple(
-                    cube.pos + direction * self.m_size)
-                if pos_near_asm_possible not in cube_positions:
-                    is_outermost = True
-                    break
+            is_outermost: bool = any(
+                tuple(cube.pos + direction * self.m_size) not in cube_positions
+                for direction in self.unit_vectors
+            )
             if is_outermost:
                 outermost_cube_ids.append(cube_id)
+
         return outermost_cube_ids
 
-    def get_reachable_module_ids(self) -> list[int]:
+    def get_reachable_module_ids_wout_cube(self) -> list[int]:
         """Get the IDs of the cubes that can be reached from the robot base.
+        The robot does not have a cube in hand.
+
+        Returns:
+            list: A list of IDs of the reachable cubes.
+        """
+        reachable_cube_ids: list[int] = []
+        for cube in self.cubes.values():
+            if np.linalg.norm(cube.pos - self.robot_base_pos) < 0.3:
+                reachable_cube_ids.append(cube.cube_id)
+        return reachable_cube_ids
+
+    def get_reachable_module_ids_with_cube(self) -> list[int]:
+        """Get the IDs of the cubes that can be reached from the robot base.
+        The robot has a cube in hand.
 
         Returns:
             list: A list of IDs of the reachable cubes.
@@ -150,15 +174,22 @@ class Assembly:
                 reachable_cube_ids.append(cube.cube_id)
         return reachable_cube_ids
 
-    def get_near_asm_pos(self) -> list[npt.NDArray]:
+    def get_near_asm_pos(self, cube_ids: list[int] = None) -> list[npt.NDArray]:
         """Get positions near the assembly that are free.
+
+        Args:
+            cube_ids (list[int]): List of cube IDs to check.
 
         Returns:
             list: A list of positions near the assembly that are free.
         """
         pos_list_near_asm: list[npt.NDArray] = []
 
-        for cube in self.cubes.values():
+        if cube_ids is None:
+            cube_ids = list(self.cubes.keys())
+
+        for cube_id in cube_ids:
+            cube = self.cubes[cube_id]
             for direction in self.unit_vectors:
                 pos_near_asm_possible: npt.NDArray\
                     = cube.pos + direction*self.m_size

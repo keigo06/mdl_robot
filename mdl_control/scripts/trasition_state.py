@@ -56,17 +56,20 @@ class TransitionState:
     def __eq__(self, other):
         return self.__hash__() == other.__hash__()
 
-    def get_able_eliminate_modules_id(self):
-        id_list_reachable = self.asm.get_reachable_module_ids()
-        id_list_outmost = self.asm.get_outermost_cube_ids(id_list_reachable)
+    def get_able_eliminate_modules_id(self) -> list[int]:
+        id_list_reachable: list[int] = self.asm.get_reachable_module_ids_wout_cube(
+        )
+        id_list_outmost: list[int] = self.asm.get_outermost_cube_ids(
+            id_list_reachable)
         # TODO: Check connectivity
         # TODO: Check robot IK
         return id_list_outmost
 
     def get_able_add_modules_pos(self, asm_eliminate: Assembly, id: int) -> list[npt.NDArray]:
-        pos_list_reachable: list[npt.NDArray] \
-            = asm_eliminate.get_near_asm_pos()
-        pos_list_add: list[npt.NDArray] = asm_eliminate.get_near_asm_pos()
+        id_list_reachable: list[npt.NDArray] \
+            = asm_eliminate.get_reachable_module_ids_with_cube()
+        pos_list_add: list[npt.NDArray] = asm_eliminate.get_near_asm_pos(
+            id_list_reachable)
         # TODO: Check connectivity
         # TODO: Check connector direction and type
         # TODO: Check robot IK
@@ -107,18 +110,17 @@ class TransitionState:
         asm_eliminate.robot_base_pos = self.asm.cubes[id].pos
         return asm_eliminate
 
-    def add_module(self, asm_eliminate, id, pos):
+    def add_module(self, asm_eliminate: Assembly, id: int, pos: npt.NDArray):
         asm_add = copy.deepcopy(asm_eliminate)
-
         asm_add.cubes[id] = copy.deepcopy(asm_add.cubes[id])
         asm_add.cubes[id].pos = pos
+        asm_add.robot_base_pos = pos
 
     def do_action(self, action):
-
         asm_eliminate = self.eliminate_module(action["id"])
         asm_add = self.add_module(asm_eliminate, action["id"], action["pos"])
 
-    def do_action_if(self, action):
+    def do_action_if(self, action: dict) -> Assembly:
 
         asm_eliminate = self.eliminate_module(action["id"])
         asm_add = self.add_module(asm_eliminate, action["id"], action["pos"])
@@ -131,6 +133,7 @@ if __name__ == "__main__":
     asm_first.create_cubic_assembly()
     state = TransitionState(asm_first)
     id_list_eliminate_modules = state.get_able_eliminate_modules_id()
+    print(id_list_eliminate_modules)
     id_selected = id_list_eliminate_modules[0]
     asm_eliminate = state.eliminate_module(id_selected)
     print(asm_eliminate.cubes[1].pos)
