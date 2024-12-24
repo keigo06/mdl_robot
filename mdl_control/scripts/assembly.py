@@ -31,6 +31,8 @@ class Assembly:
         self.asm_graph: nx.MultiDiGraph = nx.MultiDiGraph()
 
         self.actions = []
+        self.action_start_cost = 0.1  # TODO: set the action start value
+
         self.unit_vectors: list[npt.NDArray] = [
             *np.eye(3),
             *-np.eye(3)

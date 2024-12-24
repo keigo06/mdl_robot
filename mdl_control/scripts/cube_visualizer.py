@@ -27,7 +27,7 @@ class CubeNode(Node):
         # initialize the transform broadcaster
         self.tf_broadcaster = TransformBroadcaster(self)
 
-    def update_cube_pose(self, msg):
+    def update_cube_pose(self, msg: PoseStamped):
         self.get_logger().info(
             'Received cube name: "%s"' % msg.header.frame_id)
         self.get_logger().info(
