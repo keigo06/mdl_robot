@@ -17,7 +17,7 @@ import logging as log
 
 logger = log.getLogger(__name__)
 log.basicConfig(
-    level=log.DEBUG,
+    level=log.INFO,
     format="%(message)s",
     datefmt="[%X]",
     handlers=[log.FileHandler(filename="logger.log")]
@@ -40,7 +40,6 @@ class Assembly:
         cube = Cube(0, np.array([0.0, 0.0, 0.0]),
                     np.array([0.0, 0.0, 0.0, 1.0]))
         self.m_size: float = cube.m_size
-        logger.debug("m_size: %f", self.m_size)
 
         self.robot_base_pos: npt.NDArray = np.array([0.0, 0.0, 0.0])
         # TODO: 今は一時的にactionを行った場所のpos
@@ -252,6 +251,13 @@ class Assembly:
             if np.array_equal(cube.pos, pos):
                 return cube.cube_id
         return None
+
+    def print_asm(self):
+        """Print the assembly."""
+        for cube in self.cubes.values():
+            print("cube_id: ", cube.cube_id,
+                  "pos: ", cube.pos,
+                  "attitude: ", cube.attitude)
 
 
 if __name__ == '__main__':
