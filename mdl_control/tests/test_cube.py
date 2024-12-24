@@ -18,30 +18,30 @@ def test_cube_initialization():
     assert cube.cube_type == 'active_6_passive_0'
 
 
-# def test_validate_id():
-#     with pytest.raises(ValueError):
-#         Cube.validate_id(None)
-#     with pytest.raises(ValueError):
-#         Cube.validate_id(-1)
-#     assert Cube.validate_id(1) == 1
+def test_validate_id():
+    with pytest.raises(ValueError):
+        Cube.validate_id(None)
+    with pytest.raises(ValueError):
+        Cube.validate_id(-1)
+    assert Cube.validate_id(1) == 1
 
 
-# def test_validate_position():
-#     with pytest.raises(ValueError):
-#         Cube.validate_position(None)
-#     with pytest.raises(ValueError):
-#         Cube.validate_position(np.array([0, 0]))
-#     assert np.array_equal(Cube.validate_position(
-#         np.array([0, 0, 0])), np.array([0, 0, 0]))
+def test_validate_position():
+    with pytest.raises(ValueError):
+        Cube.validate_position(None)
+    with pytest.raises(ValueError):
+        Cube.validate_position(np.array([0, 0]))
+    assert np.array_equal(Cube.validate_position(
+        np.array([0, 0, 0])), np.array([0, 0, 0]))
 
 
-# def test_validate_attitude():
-#     with pytest.raises(ValueError):
-#         Cube.validate_attitude(None)
-#     with pytest.raises(ValueError):
-#         Cube.validate_attitude(np.array([0, 0]))
-#     assert np.array_equal(Cube.validate_attitude(
-#         np.array([0, 0, 0, 1])), np.array([0, 0, 0, 1]))
+def test_validate_attitude():
+    with pytest.raises(ValueError):
+        Cube.validate_attitude(None)
+    with pytest.raises(ValueError):
+        Cube.validate_attitude(np.array([0, 0]))
+    assert np.array_equal(Cube.validate_attitude(
+        np.array([0, 0, 0, 1])), np.array([0, 0, 0, 1]))
 
 
 def test_set_cube_type_active_6_passive_0():

@@ -58,7 +58,7 @@ class TransitionState:
 
     def get_able_eliminate_modules_id(self):
         id_list_reachable = self.asm.get_reachable_module_ids()
-        id_list_outmost = self.asm.get_outermost_cube_ids()
+        id_list_outmost = self.asm.get_outermost_cube_ids(id_list_reachable)
         # TODO: Check connectivity
         # TODO: Check robot IK
         return id_list_outmost
