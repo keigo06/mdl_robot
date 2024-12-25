@@ -5,31 +5,50 @@ from assembly import Assembly
 
 import numpy as np
 import numpy.typing as npt
+from typing import Optional, Any
 from scipy.optimize import linear_sum_assignment
 from heapq import heappush, heappop
 import time
 
-from logging import getLogger, basicConfig, DEBUG, INFO
-logger = getLogger(('app'))
-basicConfig(
-    level=DEBUG, filename='logger.log',
-    filemode='w', format='%(asctime)s-%(process)s-%(levelname)s-%(message)s'
-)
+from logging import getLogger, basicConfig, FileHandler, StreamHandler, Formatter, DEBUG, INFO
+logger = getLogger(('app_planner'))
+logger.setLevel(DEBUG)
+
+file_handler = FileHandler(filename='logger.log', mode='w')
+file_handler.setLevel(DEBUG)
+file_formatter = Formatter(
+    '%(asctime)s-%(process)s-%(levelname)s-%(message)s')
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
+
+console_handler = StreamHandler()
+console_handler.setLevel(INFO)
+console_formatter = Formatter(
+    '%(asctime)s-%(process)s-%(levelname)s-%(message)s')
+console_handler.setFormatter(console_formatter)
+logger.addHandler(console_handler)
 
 
 class Planner:
-    def __init__(self):
-        self.asm_first: Assembly = Assembly(num_cubes=27)
+    def __init__(self) -> None:
+        """ Planner Class
+        """
+        self.asm_first = Assembly(num_cubes=27)
         self.asm_first.create_cubic_assembly()
 
-        self.asm_purpose: Assembly = Assembly(num_cubes=27)
+        self.asm_purpose = Assembly(num_cubes=27)
         self.asm_purpose.create_tower_assembly()
 
         if len(self.asm_first.cubes) != len(self.asm_purpose.cubes):
             raise ValueError(
                 "The number of cubes in the initial state and the goal state must be the same.")
 
-        self.asm_current: Assembly = self.asm_first
+        self.asm_current = self.asm_first
+
+        # Heuristic type: manhattan or euclidean
+        self.cost_calculation_type: Optional[str] = None
+        self.cost_round_size: Optional[int] = None
+        self.weight_heuristic: float = 10.0
 
     def get_heuristec(self, asm_current: Assembly) -> float:
         """
@@ -40,13 +59,27 @@ class Planner:
         # target_positions: list[npt.NDArray] = [
         #     cube.pos for cube in self.asm_purpose.cubes.values()]
 
+        if self.cost_round_size is None:
+            raise ValueError("cost_round_size is not set.")
+            return
+
         cost_matrix: np.ndarray = np.zeros(
             (len(asm_current.cubes), len(self.asm_purpose.cubes)))
 
         for i, cube_current in enumerate(asm_current.cubes.values()):
             for j, cube_purpose in enumerate(self.asm_purpose.cubes.values()):
-                cost_matrix[i, j] = np.linalg.norm(
-                    cube_current.pos - cube_purpose.pos)
+                # TODO: Select cost
+                if self.cost_calculation_type == "manhattan":
+                    # manhattan length between the cubes, rounded to 4 decimal places
+                    cost_matrix[i, j] = np.round(
+                        np.sum(np.abs(cube_current.pos - cube_purpose.pos)), self.cost_round_size)
+                elif self.cost_calculation_type == "euclidean":
+                    # linear length between the cubes
+                    cost_matrix[i, j] = np.round(
+                        np.linalg.norm(cube_current.pos - cube_purpose.pos), self.cost_round_size)
+                else:
+                    raise ValueError(
+                        "heuristec_type must be manhattan or euclidean.")
                 if cost_matrix[i, j] != 0:
                     cost_matrix[i, j] += asm_current.action_start_cost
 
@@ -54,8 +87,10 @@ class Planner:
         row, col = linear_sum_assignment(cost_matrix, maximize=False)
 
         total_cost: float = cost_matrix[row, col].sum()
+        heuristec_cost: float = np.round(
+            total_cost * self.weight_heuristic, self.cost_round_size)
 
-        return total_cost
+        return heuristec_cost
 
     def is_same(self, asm_current: Assembly) -> bool:
         """
@@ -67,13 +102,13 @@ class Planner:
         else:
             return False
 
-    def is_done(self, asm_current) -> bool:
+    def is_done(self, state: TransitionState) -> bool:
         """
         Check if this calculation is finished.
         """
-        return self.is_same(asm_current)
+        return self.is_same(state.asm)
 
-    def solver_a_star(self) -> tuple[bool, list[dict], int, list[int], float]:
+    def solver_a_star(self) -> tuple[bool, list[Optional[dict[Any, Any]]], int, list[int], float]:
         """
         A* algorithm.
 
@@ -85,42 +120,68 @@ class Planner:
             process_time[float]:            The time it took to reach the goal state.
         """
 
-        logger.info("solver_a_star start")
         state = TransitionState(
             self.asm_current, pre_state=None, pre_action=None)
-        state.heuristic = self.get_heuristec(state.asm)
+        self.cost_calculation_type = state.cost_calculation_type
+        self.cost_round_size = state.cost_round_size
+
+        asm_current: Assembly = state.asm
+        state.heuristic = self.get_heuristec(asm_current)
         state.recalculate_score()
-        logger.debug(f"Initial state: {state}")
+
+        print(f"num_of_cubes: {len(self.asm_current.cubes)},\
+          robot_reach_length_wout_cube: {self.asm_current.robot_reach_length_wout_cube},\
+          robot_reach_length_with_cube: {self.asm_current.robot_reach_length_with_cube},\
+          action_start_cost: {self.asm_current.action_start_cost},\
+          cost_calculation_type: {self.cost_calculation_type},\
+          weight_heuristic: {self.weight_heuristic}")
+        logger.info(f"num_of_cubes: {len(self.asm_current.cubes)},\
+          robot_reach_length_wout_cube: {self.asm_current.robot_reach_length_wout_cube},\
+          robot_reach_length_with_cube: {self.asm_current.robot_reach_length_with_cube},\
+          action_start_cost: {self.asm_current.action_start_cost},\
+          cost_calculation_type: {self.cost_calculation_type},\
+          weight_heuristic: {self.weight_heuristic}")
+
+        logger.debug(f"asm_first.cubes: {len(self.asm_first.cubes)}")
+        self.asm_first.print_asm()
+
+        logger.debug(f"asm_purpose.cubes: {len(self.asm_purpose.cubes)}")
+        self.asm_purpose.print_asm()
 
         # closed_list: list for saving the states that have been searched
-        closed_list: dict[int, TransitionState] = {state.__hash__(): state}
+        closed_list: dict[float, TransitionState] = {state.__hash__(): state}
 
         # open_list: heap list for saving the states that have not been searched
         open_list: list[TransitionState] = []
+        open_list_size_before: int = 0
         heappush(open_list, state)
-        logger.debug("a star start")
+        logger.info("A star start")
 
         start = time.time()
         search_count: int = 0
         action_count_list: list[int] = []
-        end_state: TransitionState = None
+        end_state: Optional[TransitionState] = None
 
         while end_state is None and open_list:
             search_count += 1
             if search_count % 100 == 0:
-                logger.info("search count: {search_count}")
+                logger.info(
+                    f"search count: {search_count}, num_of_action_count_list: {len(action_count_list)}")
+                if logger.level == DEBUG:
+                    self.asm_current.print_asm()
 
             # Get the state with the smallest score from the open list
             state = heappop(open_list)
             state.get_able_actions()
+            logger.debug(
+                f"search count: {search_count}, closed_list: {len(closed_list)}, open_list: {len(open_list)}, diff_open_list: {len(open_list) - open_list_size_before}")
+            logger.debug(
+                f"state.cost: {state.cost}, state.heuristic: {state.heuristic}, state.score: {state.score}")
             logger.debug(f"select from {len(state.actions)} actions")
+            open_list_size_before = len(open_list)
             action_count: int = 0
             for action in state.actions:
                 action_count += 1
-                # if action is the last action of state.actions
-                if action_count == len(state.actions):
-                    logger.info(
-                        f"search count: {search_count}, action_count: {action_count}")
                 # reward is for RL
                 next_asm, reward = state.do_action_if(action)
                 next_state: TransitionState = TransitionState(
@@ -138,68 +199,76 @@ class Planner:
                 # if new state is already in closed_list
                 # and the new state's score is higher than the closed state's score
                 # then skip the new state
-                if next_state in closed_list and next_state >= closed_list[next_state.__hash__]:
+                if next_state in closed_list and next_state >= closed_list[next_state.__hash__()]:
                     continue
 
-                closed_list[next_state.__hash__] = next_state
+                closed_list[next_state.__hash__()] = next_state
                 heappush(open_list, next_state)
 
             action_count_list.append(action_count)
-            logger.debug(f"sum_of_action_count_list: {sum(action_count_list)}")
 
         process_time = time.time() - start
 
         if end_state is None:
             logger.info("End state not found")
-            return False, [], search_count, process_time
+            return False, [], search_count, action_count_list, process_time
 
         # Save the actions to reach the goal state
         state = end_state
-        actions_solved: list[dict] = []
+        actions_solved: list[Optional[dict]] = []
 
         while state.pre_state is not None:
             actions_solved.append(state.pre_action)
             state = state.pre_state
         actions_solved.reverse()
-        return tuple[True, actions_solved, search_count, action_count_list, process_time]
+        return True, actions_solved, search_count, action_count_list, process_time
 
-    def show_actions_result(self, actions_solved: list[dict], search_count: int, action_count_list: list[int], process_time: float) -> None:
+    def show_actions_result(self, actions_solved: list[Optional[dict[Any, Any]]], search_count: int, action_count_list: list[int], process_time: float) -> None:
         """
         Show the result of the actions.
         """
-        print("Show actions result:")
-        state = TransitionState(
-            self.asm_current, pre_asm=None, pre_action=None)
-        for action in actions_solved:
+        if actions_solved is None:
+            print("No actions found.")
+            return
+        else:
+            print("Show actions result:")
+            state = TransitionState(
+                self.asm_current, pre_state=None, pre_action=None)
+            for action in actions_solved:
+                self.asm_current.print_asm()
+
+                # for debug
+                logger.debug(f"state.cost: {state.cost}")
+                logger.debug(
+                    f"state.heuristic: {self.get_heuristec(state.asm)}")
+                logger.debug("↓")
+                logger.debug(
+                    f"out_most_cube_ids: {state.asm.get_outermost_cube_ids()}")
+                logger.debug(
+                    f"eliminate_cube_ids: {state.get_able_eliminate_modules_id()}")
+                state.get_able_actions()
+                able_ids = []
+                for able_action in state.actions:
+                    logger.debug("cube id:", able_action["cube_id"],
+                                 "to pos:", able_action["pos"],
+                                 "cost:", able_action["cost"],)
+                    able_ids.append(able_action["cube_id"])
+                logger.debug("able_action_ids:", able_ids)
+                if action is None:
+                    continue
+                logger.debug("action[cost]:", action["cost"])
+
+                state.do_action(action)
+                self.asm_current = state.asm
+                print("↓")
+
             self.asm_current.print_asm()
-
-            # for debug
-            logger.debug(f"state.cost: {state.cost}")
-            logger.debug(f"state.heuristic: {self.get_heuristec(state.asm)}")
-            logger.debug("↓")
-            logger.debug(
-                f"out_most_cube_ids: {state.asm.get_outermost_cube_ids()}")
-            logger.debug(
-                f"eliminate_cube_ids: {state.get_able_eliminate_modules_id()}")
-            state.get_able_actions()
-            able_ids = []
-            for able_action in state.actions:
-                logger.debug("cube id:", able_action["id"],
-                             "to pos:", able_action["pos"],
-                             "cost:", able_action["cost"],)
-                able_ids.append(able_action["id"])
-            logger.debug("able_action_ids:", able_ids)
-            logger.debug("action[cost]:", action["cost"])
-
-            state.do_action(action)
-            self.asm_current = state.asm
-            print("↓")
-
-        self.asm_current.print_asm()
-
-        print(
-            f"hands={len(actions_solved)}, search_count={search_count},\
-            action_count={sum(action_count_list)}, process_time={process_time} s")
+            print(
+                f"hands={len(actions_solved)}, search_count={search_count},\
+              action_count={sum(action_count_list)}, process_time={process_time} s")
+            logger.info(
+                f"hands={len(actions_solved)}, search_count={search_count},\
+              action_count={sum(action_count_list)}, process_time={process_time} s")
 
 
 if __name__ == "__main__":

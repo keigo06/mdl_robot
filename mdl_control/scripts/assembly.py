@@ -10,14 +10,15 @@ from cube import Cube
 
 import numpy as np
 import numpy.typing as npt
-import networkx as nx
+from typing import Optional
+# import networkx as nx
 
 import logging as log
 
 
-logger = log.getLogger(__name__)
+logger = log.getLogger('app_planner')
 log.basicConfig(
-    level=log.INFO,
+    level=log.DEBUG,
     format="%(message)s",
     datefmt="[%X]",
     handlers=[log.FileHandler(filename="logger.log")]
@@ -28,9 +29,9 @@ class Assembly:
     def __init__(self, num_cubes: int = 27):
         self.num_cubes = num_cubes
         self.cubes: dict[int, Cube] = {}
-        self.asm_graph: nx.MultiDiGraph = nx.MultiDiGraph()
+        # self.asm_graph: nx.MultiDiGraph = nx.MultiDiGraph()
 
-        self.actions = []
+        self.actions: list[str] = []
         self.action_start_cost = 0.1  # TODO: set the action start value
 
         self.unit_vectors: list[npt.NDArray] = [
@@ -42,37 +43,40 @@ class Assembly:
         self.m_size: float = cube.m_size
 
         self.robot_base_pos: npt.NDArray = np.array([0.0, 0.0, 0.0])
+        self.robot_reach_length_wout_cube: float = 0.13
+        self.robot_reach_length_with_cube: float = 0.25
         # TODO: 今は一時的にactionを行った場所のpos
 
-    def create_line_assembly(self):
+    def create_line_assembly(self) -> None:
         """Create an assembly of cubes arranged in a straight line."""
         for id in range(self.num_cubes):
             self.cubes[id] = Cube(
                 id, np.array([id * 0.12, 0.0, 0.06]), np.array([0.0, 0.0, 0.0, 1.0]))
             self.cubes[id].set_cube_type('active_6_passive_0')
 
-    def create_tower_assembly(self):
+    def create_tower_assembly(self) -> None:
         """Create an assembly of cubes arranged in a tower."""
         for id in range(self.num_cubes):
             self.cubes[id] = Cube(id, np.array(
-                [0.0, 0.0, 0.06 + id*self.m_size]), np.array([0.0, 0.0, 0.0, 1.0]))
+                [0.0, 0.0, self.m_size/2 + id*self.m_size]), np.array([0.0, 0.0, 0.0, 1.0]))
             self.cubes[id].set_cube_type('active_6_passive_0')
 
-    def create_grid_assembly(self):
+    def create_grid_assembly(self) -> None:
         """Create an assembly of cubes arranged in a grid."""
-        factors: list[int] = self.find_factors(self.num_cubes)
-        grid_x, grid_y = min(factors, key=lambda f: abs(f[0] - f[1]))
+        factors: list[list[int]] = self.find_factors(self.num_cubes)
+        grid_x, grid_y = min(factors[0], factors[1],
+                             key=lambda f: abs(f[0] - f[1]))
         for i in range(grid_y):
             for j in range(grid_x):
                 self.cubes[i * grid_x + j] = Cube(
                     cube_id=i * grid_x + j,
-                    pos=np.array([i * 0.12, j * 0.12, 0.06]),
+                    pos=np.array([i * 0.12, j * 0.12, 0.12]),
                     attitude=np.array([0.0, 0.0, 0.0, 1.0])
                 )
                 self.cubes[i * grid_x + j].set_cube_type(
                     'active_6_passive_0')
 
-    def find_factors(self, n: int) -> list:
+    def find_factors(self, n: int) -> list[list[int]]:
         """Return a list of factors of n.
 
         Args:
@@ -81,13 +85,13 @@ class Assembly:
         Returns:
             list: A list of tuples, each containing a pair of factors.
         """
-        factors: list[int] = []
+        factors: list[list[int]] = []
         for i in range(1, int(np.sqrt(n)) + 1):
             if n % i == 0:
-                factors.append((i, n // i))
+                factors.append([i, n // i])
         return factors
 
-    def create_cubic_assembly(self):
+    def create_cubic_assembly(self) -> None:
         """Create an assembly of cubes arranged in a cube.
         for example, if num_cubes = 27, it creates a 3x3x3 assembly.
         """
@@ -99,20 +103,20 @@ class Assembly:
                     self.cubes[cube_id] = Cube(
                         cube_id=cube_id,
                         pos=np.array([
-                            x * self.m_size, y * self.m_size, z * self.m_size]),
+                            x * self.m_size, y * self.m_size, z * self.m_size+self.m_size/2]),
                         attitude=np.array([0.0, 0.0, 0.0, 1.0])
                     )
                     self.cubes[cube_id].set_cube_type('active_6_passive_0')
 
-    def change_cubes_to_network(self):
-        """create networkx graph from cubes"""
-        pass
-        # TODO: create networkx graph from cubes
-        self.asm_graph.clear()
-        for cube in self.cubes.values():
-            self.asm_graph.add_node(cube.cube_id, pos=cube.pos)
+    # def change_cubes_to_network(self) -> None:
+    #     """create networkx graph from cubes"""
+    #     pass
+    #     # TODO: create networkx graph from cubes
+    #     self.asm_graph.clear()
+    #     for cube in self.cubes.values():
+    #         self.asm_graph.add_node(cube.cube_id, pos=cube.pos)
 
-    def get_outermost_cube_ids(self, cube_ids: list[int] = None) -> list[int]:
+    def get_outermost_cube_ids(self, cube_ids: Optional[list[int]] = None) -> list[int]:
         """Get the IDs of the outermost cubes in the assembly.
 
         Args:
@@ -158,7 +162,7 @@ class Assembly:
         """
         reachable_cube_ids: list[int] = []
         for cube in self.cubes.values():
-            if np.linalg.norm(cube.pos - self.robot_base_pos) < 0.3:
+            if np.linalg.norm(cube.pos - self.robot_base_pos) < self.robot_reach_length_wout_cube:
                 reachable_cube_ids.append(cube.cube_id)
         return reachable_cube_ids
 
@@ -171,11 +175,11 @@ class Assembly:
         """
         reachable_cube_ids: list[int] = []
         for cube in self.cubes.values():
-            if np.linalg.norm(cube.pos - self.robot_base_pos) < 0.4:
+            if np.linalg.norm(cube.pos - self.robot_base_pos) < self.robot_reach_length_with_cube:
                 reachable_cube_ids.append(cube.cube_id)
         return reachable_cube_ids
 
-    def get_near_asm_pos(self, cube_ids: list[int] = None) -> list[npt.NDArray]:
+    def get_near_asm_pos(self, cube_ids: Optional[list[int]] = None) -> list[npt.NDArray]:
         """Get positions near the assembly that are free.
 
         Args:
@@ -194,7 +198,9 @@ class Assembly:
             for direction in self.unit_vectors:
                 pos_near_asm_possible: npt.NDArray\
                     = cube.pos + direction*self.m_size
-                if self.is_pos_free(pos_near_asm_possible):
+                if self.is_pos_free(pos_near_asm_possible) \
+                        and not any(np.array_equal(pos_near_asm_possible, pos)
+                                    for pos in pos_list_near_asm):
                     pos_list_near_asm.append(pos_near_asm_possible)
 
         return pos_list_near_asm
@@ -238,7 +244,7 @@ class Assembly:
                 return False
         return True
 
-    def get_cube_id_by_pos(self, pos: npt.NDArray) -> int:
+    def get_cube_id_by_pos(self, pos: npt.NDArray) -> Optional[int]:
         """Get the cube id at a given position, if any.
 
         Args:
@@ -252,14 +258,16 @@ class Assembly:
                 return cube.cube_id
         return None
 
-    def print_asm(self):
+    def print_asm(self) -> None:
         """Print the assembly."""
         for cube in self.cubes.values():
-            print("cube_id: ", cube.cube_id,
-                  "pos: ", cube.pos,
-                  "attitude: ", cube.attitude)
+            print(
+                f"cube_id: {cube.cube_id}, pos: {cube.pos}, attitude: {cube.attitude}")
+            logger.debug(
+                f"cube_id: {cube.cube_id}, pos: {cube.pos}, attitude: {cube.attitude}")
 
 
 if __name__ == '__main__':
-    assembly = Assembly(num_cubes=27).create_cubic_assembly()
+    assembly = Assembly(num_cubes=27)
+    assembly.create_cubic_assembly()
     print("Assembly main")

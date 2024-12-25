@@ -2,6 +2,7 @@
 
 import numpy as np
 import numpy.typing as npt
+from typing import Optional, Any
 from scipy.spatial.transform import Rotation as R
 
 
@@ -49,7 +50,7 @@ class Cube:
         self.pos: npt.NDArray = self.validate_position(pos)
         self.attitude: npt.NDArray = self.validate_attitude(attitude)
         self.cube_type: str = 'active_6_passive_0'
-        self.connectors: list[dict[str, str]] = []
+        self.connectors: list[dict[str, Any]] = []
         self.set_cube_type(self.cube_type)
         self.unit_vectors: list[npt.NDArray] = [
             *np.eye(3),
@@ -77,7 +78,7 @@ class Cube:
         return np.array(attitude)
 
     def set_cube_type(self, cube_type: str):
-        self.cube_type: str = cube_type
+        self.cube_type = cube_type
 
         if cube_type == 'active_6_passive_0':
             # 6 faces: active / 0 faces: passive
@@ -160,7 +161,7 @@ class Cube:
         else:
             raise ValueError(f"Invalid cube type: {cube_type}")
 
-    def set_connector(self, face: int, connector_type: str, mode: str = None):
+    def set_connector(self, face: int, connector_type: str, mode: Optional[str] = None):
         """ Set connector type and mode
         Args:
             face (int): 0-5
@@ -288,4 +289,5 @@ class Cube:
 
 
 if __name__ == "__main__":
-    cube = Cube(cube_id=0, pos=[0, 0, 0], attitude=[0, 0, 0, 1])
+    cube = Cube(cube_id=0, pos=np.array(
+        [0, 0, 0]), attitude=np.array([0, 0, 0, 1]))
