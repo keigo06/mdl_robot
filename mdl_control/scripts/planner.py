@@ -43,7 +43,7 @@ class Planner:
             raise ValueError(
                 "The number of cubes in the initial state and the goal state must be the same.")
 
-        self.asm_current = self.asm_first
+        self.asm_first = self.asm_first
 
         # Heuristic type: manhattan or euclidean
         self.cost_calculation_type: Optional[str] = None
@@ -108,6 +108,17 @@ class Planner:
         """
         return self.is_same(state.asm)
 
+    def is_explored(self, next_state: TransitionState, closed_dict: dict[float, TransitionState]) -> bool:
+        # 探索済みかつコストが大きい場合:       True 探索しない
+        # 探索済みかつコストが小さい場合:       False 探索する
+        # 探索済みでない場合:                 False 探索する
+        next_state_hash = next_state.__hash__()
+        if next_state_hash in closed_dict:
+            closed_node = closed_dict[next_state_hash]
+            if closed_node.cost <= next_state.cost:
+                return True
+        return False
+
     def solver_a_star(self) -> tuple[bool, list[Optional[dict[Any, Any]]], int, list[int], float]:
         """
         A* algorithm.
@@ -120,25 +131,23 @@ class Planner:
             process_time[float]:            The time it took to reach the goal state.
         """
 
-        state = TransitionState(
-            self.asm_current, pre_state=None, pre_action=None)
-        self.cost_calculation_type = state.cost_calculation_type
-        self.cost_round_size = state.cost_round_size
+        initial_state = TransitionState(
+            self.asm_first, pre_state=None, pre_action=None)
+        self.cost_calculation_type = initial_state.cost_calculation_type
+        self.cost_round_size = initial_state.cost_round_size
+        initial_state.heuristic = self.get_heuristec(initial_state.asm)
+        initial_state.recalculate_score()
 
-        asm_current: Assembly = state.asm
-        state.heuristic = self.get_heuristec(asm_current)
-        state.recalculate_score()
-
-        print(f"num_of_cubes: {len(self.asm_current.cubes)},\
-          robot_reach_length_wout_cube: {self.asm_current.robot_reach_length_wout_cube},\
-          robot_reach_length_with_cube: {self.asm_current.robot_reach_length_with_cube},\
-          action_start_cost: {self.asm_current.action_start_cost},\
+        print(f"num_of_cubes: {len(self.asm_first.cubes)},\
+          robot_reach_length_wout_cube: {self.asm_first.robot_reach_length_wout_cube},\
+          robot_reach_length_with_cube: {self.asm_first.robot_reach_length_with_cube},\
+          action_start_cost: {self.asm_first.action_start_cost},\
           cost_calculation_type: {self.cost_calculation_type},\
           weight_heuristic: {self.weight_heuristic}")
-        logger.info(f"num_of_cubes: {len(self.asm_current.cubes)},\
-          robot_reach_length_wout_cube: {self.asm_current.robot_reach_length_wout_cube},\
-          robot_reach_length_with_cube: {self.asm_current.robot_reach_length_with_cube},\
-          action_start_cost: {self.asm_current.action_start_cost},\
+        logger.info(f"num_of_cubes: {len(self.asm_first.cubes)},\
+          robot_reach_length_wout_cube: {self.asm_first.robot_reach_length_wout_cube},\
+          robot_reach_length_with_cube: {self.asm_first.robot_reach_length_with_cube},\
+          action_start_cost: {self.asm_first.action_start_cost},\
           cost_calculation_type: {self.cost_calculation_type},\
           weight_heuristic: {self.weight_heuristic}")
 
@@ -149,12 +158,13 @@ class Planner:
         self.asm_purpose.print_asm()
 
         # closed_list: list for saving the states that have been searched
-        closed_list: dict[float, TransitionState] = {state.__hash__(): state}
+        closed_dict: dict[float, TransitionState] = {
+            initial_state.__hash__(): initial_state}
 
         # open_list: heap list for saving the states that have not been searched
         open_list: list[TransitionState] = []
         open_list_size_before: int = 0
-        heappush(open_list, state)
+        heappush(open_list, initial_state)
         logger.info("A star start")
 
         start = time.time()
@@ -164,29 +174,34 @@ class Planner:
 
         while end_state is None and open_list:
             search_count += 1
+            # Get the state with the smallest score from the open list
+            current_state: TransitionState = heappop(open_list)
             if search_count % 100 == 0:
                 logger.info(
                     f"search count: {search_count}, num_of_action_count_list: {len(action_count_list)}")
                 if logger.level == DEBUG:
-                    self.asm_current.print_asm()
-
-            # Get the state with the smallest score from the open list
-            state = heappop(open_list)
-            state.get_able_actions()
-            logger.debug(
-                f"search count: {search_count}, closed_list: {len(closed_list)}, open_list: {len(open_list)}, diff_open_list: {len(open_list) - open_list_size_before}")
-            logger.debug(
-                f"state.cost: {state.cost}, state.heuristic: {state.heuristic}, state.score: {state.score}")
-            logger.debug(f"select from {len(state.actions)} actions")
+                    current_state.asm.print_asm()
+            if self.is_done(current_state):
+                end_state = current_state
+                logger.info("End state found")
+                current_state.actions = []
+            else:
+                current_state.get_able_actions()
+                logger.debug(
+                    f"search count: {search_count}, closed_list: {len(closed_dict)}, open_list: {len(open_list)}, diff_open_list: {len(open_list) - open_list_size_before}")
+                logger.debug(
+                    f"state.cost: {current_state.cost}, state.heuristic: {current_state.heuristic}, state.score: {current_state.score}")
+                logger.debug(
+                    f"select from {len(current_state.actions)} actions")
             open_list_size_before = len(open_list)
             action_count: int = 0
-            for action in state.actions:
+            for action in current_state.actions:
                 action_count += 1
                 # reward is for RL
-                next_asm, reward = state.do_action_if(action)
+                next_asm, reward = current_state.do_action_if(action)
                 next_state: TransitionState = TransitionState(
                     next_asm,
-                    pre_state=state,
+                    pre_state=current_state,
                     pre_action=action)
                 next_state.heuristic = self.get_heuristec(next_state.asm)
                 next_state.recalculate_score()
@@ -196,14 +211,9 @@ class Planner:
                     logger.info("End state found")
                     break
 
-                # if new state is already in closed_list
-                # and the new state's score is higher than the closed state's score
-                # then skip the new state
-                if next_state in closed_list and next_state >= closed_list[next_state.__hash__()]:
-                    continue
-
-                closed_list[next_state.__hash__()] = next_state
-                heappush(open_list, next_state)
+                if not self.is_explored(next_state, closed_dict):
+                    heappush(open_list, next_state)
+                    closed_dict[next_state.__hash__()] = next_state
 
             action_count_list.append(action_count)
 
@@ -214,12 +224,12 @@ class Planner:
             return False, [], search_count, action_count_list, process_time
 
         # Save the actions to reach the goal state
-        state = end_state
+        current_state = end_state
         actions_solved: list[Optional[dict]] = []
 
-        while state.pre_state is not None:
-            actions_solved.append(state.pre_action)
-            state = state.pre_state
+        while current_state.pre_state is not None:
+            actions_solved.append(current_state.pre_action)
+            current_state = current_state.pre_state
         actions_solved.reverse()
         return True, actions_solved, search_count, action_count_list, process_time
 
@@ -233,9 +243,9 @@ class Planner:
         else:
             print("Show actions result:")
             state = TransitionState(
-                self.asm_current, pre_state=None, pre_action=None)
+                self.asm_first, pre_state=None, pre_action=None)
             for action in actions_solved:
-                self.asm_current.print_asm()
+                self.asm_first.print_asm()
 
                 # for debug
                 logger.debug(f"state.cost: {state.cost}")
@@ -259,10 +269,10 @@ class Planner:
                 logger.debug("action[cost]:", action["cost"])
 
                 state.do_action(action)
-                self.asm_current = state.asm
+                self.asm_first = state.asm
                 print("↓")
 
-            self.asm_current.print_asm()
+            self.asm_first.print_asm()
             print(
                 f"hands={len(actions_solved)}, search_count={search_count},\
               action_count={sum(action_count_list)}, process_time={process_time} s")

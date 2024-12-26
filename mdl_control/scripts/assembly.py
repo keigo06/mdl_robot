@@ -43,8 +43,8 @@ class Assembly:
         self.m_size: float = cube.m_size
 
         self.robot_base_pos: npt.NDArray = np.array([0.0, 0.0, 0.0])
-        self.robot_reach_length_wout_cube: float = 0.13
-        self.robot_reach_length_with_cube: float = 0.25
+        self.robot_reach_length_wout_cube: float = 5.0
+        self.robot_reach_length_with_cube: float = 0.35
         # TODO: 今は一時的にactionを行った場所のpos
 
     def create_line_assembly(self) -> None:

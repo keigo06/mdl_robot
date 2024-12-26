@@ -28,16 +28,20 @@ class TransitionState:
         self.actions: list[dict] = []
         self.pre_state: Optional[TransitionState] = pre_state
         self.pre_action: Optional[dict] = pre_action
+
+        # score/heuristic/cost is better if it is smaller
+        # because it is used in priority queue
         self.cost: float = 0
         self.cost_calculation_type: str = "manhattan"
         self.cost_round_size: int = 4
-
         if pre_state is None or pre_action is None:
             self.cost = 0
         else:
             self.cost = round(
                 pre_state.cost + pre_action["cost"], self.cost_round_size)
         self.heuristic: float = 0
+        # f = g + h
+        # g: cost, h: heuristic, f: score
         self.score: float = np.round(
             self.heuristic + self.cost, self.cost_round_size)
 
@@ -114,7 +118,7 @@ class TransitionState:
             for pos in pos_list_add:
                 current_pos: npt.NDArray = self.asm.cubes[id].pos
 
-                if np.linalg.norm(pos - current_pos) == 0:
+                if np.round(np.linalg.norm(pos - current_pos), self.cost_round_size) == 0:
                     continue
                 asm_add: Assembly = self.add_module(asm_eliminate, id, pos)
                 action: dict = {
