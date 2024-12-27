@@ -2,6 +2,7 @@ README.md
 setup.py
 scripts/__init__.py
 scripts/assembly.py
+scripts/assembly_robot.py
 scripts/cube.py
 scripts/cube_visualizer.py
 scripts/planner.py

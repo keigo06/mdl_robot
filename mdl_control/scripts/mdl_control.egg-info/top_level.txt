@@ -1,5 +1,6 @@
 __init__
 assembly
+assembly_robot
 cube
 cube_visualizer
 planner

@@ -8,7 +8,7 @@
 ```bash
 cd ~/mdl_ros2_ws
 . .venv/bin/activate
-cd cd src/mdl_robot/mdl_control
+cd src/mdl_robot/mdl_control
 pip install -e .
 ```
 
