@@ -28,13 +28,19 @@ def generate_launch_description():
     xacro_path = os.path.join(pkg_dir, "urdf", "mdl_cube.xacro")
 
     # Switch initial assembly
-    set_grid_6_as_initial_assembly = 'true'
+    set_grid_6_as_initial_assembly = 'false'
+    set_cubic_27_as_initial_assembly = 'true'
+
     grid_6_arg = DeclareLaunchArgument('grid_6',
                                        default_value=set_grid_6_as_initial_assembly)
+    cubic_27_arg = DeclareLaunchArgument('cubic_27',
+                                         default_value=set_cubic_27_as_initial_assembly)
 
     robot_description_command = ['xacro ', xacro_path,
                                  ' grid_6:=',
                                  LaunchConfiguration('grid_6'),
+                                 ' cubic_27:=',
+                                 LaunchConfiguration('cubic_27'),
                                  ]
 
     robot_state_publisher_node = Node(
@@ -61,6 +67,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         grid_6_arg,
+        cubic_27_arg,
         rviz_arg,
         robot_state_publisher_node,
         rviz_node

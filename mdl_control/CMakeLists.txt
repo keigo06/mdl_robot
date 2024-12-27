@@ -39,6 +39,7 @@ install(
   PROGRAMS
     scripts/cube.py
     scripts/assembly.py
+    scripts/assembly_robot.py
     scripts/trasition_state.py
     scripts/planner.py
     scripts/server.py

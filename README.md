@@ -130,7 +130,7 @@ ros2 launch mdl_control display_cube.launch.py
 - Visualizer
 
 ```bash
-ros2 launch mdl_control cube_cisualizer.launch.py
+ros2 launch mdl_control cube_visualizer.launch.py
 ```
 
 - Simple Node - will be replace by launch of server.py

@@ -14,6 +14,8 @@ from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
 
 import numpy as np
+import numpy.typing as npt
+import csv
 
 
 class SimpleCubePublisher(Node):
@@ -42,21 +44,35 @@ class SimpleCubePublisher(Node):
         ]
         self.current_action_index = 0
 
+        self.actions_solved = self.load_actions_from_csv('action_log.csv')
+
         timer_period = 1.0  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-    def timer_callback(self):
-        if self.current_action_index < len(self.example_actions):
-            action = self.example_actions[self.current_action_index]
-            msg = PoseStamped()
+    def load_actions_from_csv(self, file_path):
+        data = np.loadtxt(file_path, delimiter=',', skiprows=1)
+        actions = []
+        for row in data:
+            action = {
+                'cube_name': 'mdl_cube_' + f'{int(row[0]):02}' + '_body_link',
+                'pos': row[1:4].tolist(),
+                'attitude': row[4:8].tolist()
+            }
+            actions.append(action)
+        return actions
+
+    def timer_callback(self) -> None:
+        if self.current_action_index < len(self.actions_solved):
+            action = self.actions_solved[self.current_action_index]
+            msg: PoseStamped = PoseStamped()
             msg.header.frame_id = action['cube_name']
             msg.pose.position.x = action['pos'][0]
             msg.pose.position.y = action['pos'][1]
             msg.pose.position.z = action['pos'][2]
-            msg.pose.orientation.x = 0.0
-            msg.pose.orientation.y = 0.0
-            msg.pose.orientation.z = 0.0
-            msg.pose.orientation.w = 1.0
+            msg.pose.orientation.x = action['attitude'][0]
+            msg.pose.orientation.y = action['attitude'][1]
+            msg.pose.orientation.z = action['attitude'][2]
+            msg.pose.orientation.w = action['attitude'][3]
 
             self.publisher_.publish(msg)
             self.get_logger().info(
@@ -78,7 +94,6 @@ class SimpleCubePublisher(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-
     simple_cube_publisher = SimpleCubePublisher()
     rclpy.spin(simple_cube_publisher)
     simple_cube_publisher.destroy_node()
