@@ -9,6 +9,7 @@ from typing import Optional, Any
 from scipy.optimize import linear_sum_assignment
 from heapq import heappush, heappop
 import time
+import csv
 
 from logging import getLogger, basicConfig, FileHandler, StreamHandler, Formatter, DEBUG, INFO
 logger = getLogger(('app_planner'))
@@ -233,7 +234,7 @@ class Planner:
         actions_solved.reverse()
         return True, actions_solved, search_count, action_count_list, process_time
 
-    def show_actions_result(self, actions_solved: list[Optional[dict[Any, Any]]], search_count: int, action_count_list: list[int], process_time: float) -> None:
+    def show_actions_result(self, actions_solved: list[Optional[dict[str, Any]]], search_count: int, action_count_list: list[int], process_time: float) -> None:
         """
         Show the result of the actions.
         """
@@ -247,32 +248,29 @@ class Planner:
             for action in actions_solved:
                 self.asm_first.print_asm()
 
-                # for debug
                 logger.debug(f"state.cost: {state.cost}")
                 logger.debug(
                     f"state.heuristic: {self.get_heuristec(state.asm)}")
                 logger.debug("↓")
-                logger.debug(
-                    f"out_most_cube_ids: {state.asm.get_outermost_cube_ids()}")
-                logger.debug(
-                    f"eliminate_cube_ids: {state.get_able_eliminate_modules_id()}")
-                state.get_able_actions()
-                able_ids = []
-                for able_action in state.actions:
-                    logger.debug("cube id:", able_action["cube_id"],
-                                 "to pos:", able_action["pos"],
-                                 "cost:", able_action["cost"],)
-                    able_ids.append(able_action["cube_id"])
-                logger.debug("able_action_ids:", able_ids)
-                if action is None:
-                    continue
-                logger.debug("action[cost]:", action["cost"])
+                if action is not None:
+                    logger.debug("action[cube_id]: %s, action[pos]: %s, action[cost]: %s",
+                                 action["cube_id"], action["pos"], action["cost"])
 
                 state.do_action(action)
                 self.asm_first = state.asm
                 print("↓")
 
             self.asm_first.print_asm()
+
+            # actions_solved を logとして出力
+            # {'cube_name': 'mdl_cube_02_body_link','pos': [0.24, 0.00, 0.06], 'attitude': [0.0, 0.0, 0.0, 1.0]},
+
+            logger.info("actions_solved:")
+            for action in actions_solved:
+                if action is not None:
+                    logger.info(
+                        f"cube_name: {action['cube_id']}, pos: {action['pos']}, attitude: [0.0, 0.0, 0.0, 1.0]")
+
             print(
                 f"hands={len(actions_solved)}, search_count={search_count},\
               action_count={sum(action_count_list)}, process_time={process_time} s")
@@ -280,9 +278,26 @@ class Planner:
                 f"hands={len(actions_solved)}, search_count={search_count},\
               action_count={sum(action_count_list)}, process_time={process_time} s")
 
+    def export_actions_result(self, actions_solved: list[Optional[dict[str, Any]]], search_count: int, action_count_list: list[int], process_time: float) -> None:
+        """
+        Export the result of the actions as action_log.csv.
+        """
+        data = []
+        for action in actions_solved:
+            if action is not None:
+                data.append([
+                    action['cube_id'],
+                    *action['pos'],
+                    *[0.0, 0.0, 0.0, 1.0]
+                ])
+        np.savetxt('action_log.csv', data, delimiter=',',
+                   header='cube_name,pos_x,pos_y,pos_z,attitude_x,attitude_y,attitude_z,attitude_w', comments='')
+
 
 if __name__ == "__main__":
     planner = Planner()
     is_done, actions_solved, search_count, action_count_list, process_time = planner.solver_a_star()
     planner.show_actions_result(
+        actions_solved, search_count, action_count_list, process_time)
+    planner.export_actions_result(
         actions_solved, search_count, action_count_list, process_time)
