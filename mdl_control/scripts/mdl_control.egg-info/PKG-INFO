@@ -1,11 +1,12 @@
 Metadata-Version: 2.1
-Name: mdl-control
+Name: mdl_control
 Version: 0.1.0
 Summary: modular robot control package
-Home-page: UNKNOWN
 Author: Keigo Torii
-License: UNKNOWN
-Platform: UNKNOWN
-
-UNKNOWN
-
+Requires-Dist: mypy==1.13.0
+Requires-Dist: mypy-extensions==1.0.0
+Requires-Dist: networkx==3.4.2
+Requires-Dist: numpy==2.2.0
+Requires-Dist: scipy==1.14.1
+Requires-Dist: scipy-stubs==1.14.1.6
+Requires-Dist: typing_extensions==4.12.2
