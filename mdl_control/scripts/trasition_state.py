@@ -149,10 +149,10 @@ class TransitionState:
             raise ValueError("cost_calculation_type is invalid")
         action["cost"] = np.round(
             action_pos_distance_cost + asm_add.action_start_cost, self.cost_round_size)
-        action["next_asm"] = copy.deepcopy(asm_add)
+        # action["next_asm"] = copy.deepcopy(asm_add)
 
-    def eliminate_module(self, id):
-        asm_eliminate = copy.deepcopy(self.asm)
+    def eliminate_module(self, id: int) -> Assembly:
+        asm_eliminate: Assembly = copy.deepcopy(self.asm)
         asm_eliminate.cubes.pop(id)
         asm_eliminate.update_networkx_remove_node(id)
         asm_eliminate.robot_base_pos = self.asm.cubes[id].pos

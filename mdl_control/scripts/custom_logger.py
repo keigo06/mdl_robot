@@ -8,6 +8,7 @@ logger.setLevel(INFO)
 class CustomLogger:
     def __init__(self) -> None:
         self.times: dict[str, float] = {
+            "planning_all": 0.0,
             "pop_from_open_list": 0.0,
             "push_to_open_list": 0.0,
             "push_to_closed_list": 0.0,
@@ -17,6 +18,10 @@ class CustomLogger:
             "calculate_heuristic": 0.0,
         }
         self.start_times: dict = {}
+        self.memory_usage: dict[str, float] = {
+            "open_list": 0.0,
+            "closed_list": 0.0,
+        }
 
     def start(self, process_name: str):
         self.start_times[process_name] = time.time()

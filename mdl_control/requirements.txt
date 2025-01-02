@@ -5,3 +5,11 @@ numpy==2.2.0
 scipy==1.14.1
 scipy-stubs==1.14.1.6
 typing_extensions==4.12.2
+linkify-it-py==2.0.3
+markdown-it-py==3.0.0
+mdit-py-plugins==0.4.2
+mdurl==0.1.2
+memray==1.15.0
+rich==13.9.4
+textual==1.0.0
+uc-micro-py==1.0.3

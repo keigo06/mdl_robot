@@ -2,6 +2,7 @@
 
 from trasition_state import TransitionState
 from assembly import Assembly
+from custom_logger import CustomLogger
 
 import numpy as np
 import numpy.typing as npt
@@ -51,6 +52,8 @@ class Planner:
         self.cost_calculation_type: Optional[str] = None
         self.cost_round_size: Optional[int] = None
         self.weight_heuristic: float = 10.0
+
+        self.custom_logger = CustomLogger()
 
     def get_heuristec(self, asm_current: Assembly) -> float:
         """
