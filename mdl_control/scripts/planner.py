@@ -49,7 +49,7 @@ class Planner:
         # Heuristic type: manhattan or euclidean
         self.cost_calculation_type: Optional[str] = None
         self.cost_round_size: Optional[int] = None
-        self.weight_heuristic: float = 10.0
+        self.weight_heuristic: float = 1.0
 
     def get_heuristec(self, asm_current: Assembly) -> float:
         """
