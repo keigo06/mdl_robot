@@ -13,11 +13,17 @@ cd src/mdl_robot/mdl_control
 pip install -e .
 ```
 
-## tutorial
+## Start A star solver with memray and save result to logger.log and action_log.csv
 
 ```bash
 # terminal 1
-~/mdl_ros2_ws$ ros2 launch　mdl_control display_server.launch.py
+cd ~/mdl_ros2_ws/src/mdl_robot/mdl_control
+memray run --live-remote scripts/planner.py
+```
+
+```bash
+# terminal 2
+memray live <port number>
 ```
 
 ## pytest
