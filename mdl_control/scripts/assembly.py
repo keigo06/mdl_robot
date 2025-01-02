@@ -10,8 +10,8 @@ from cube import Cube
 
 import numpy as np
 import numpy.typing as npt
-from typing import Optional
-# import networkx as nx
+from typing import Optional, Union
+import networkx as nx
 
 import logging as log
 
@@ -26,10 +26,14 @@ log.basicConfig(
 
 
 class Assembly:
-    def __init__(self, num_cubes: int = 27):
+    def __init__(self, num_cubes: int = 27, mode: str = "all_connector_active") -> None:
         self.num_cubes = num_cubes
         self.cubes: dict[int, Cube] = {}
-        # self.asm_graph: nx.MultiDiGraph = nx.MultiDiGraph()
+        self.mode: str = mode
+        if mode == "all_connector_active":
+            self.asm_graph: Union[nx.Graph, nx.MultiDiGraph] = nx.Graph()
+        else:
+            self.asm_graph = nx.MultiDiGraph()
 
         self.actions: list[str] = []
         self.action_start_cost = 0.1  # TODO: set the action start value
@@ -53,6 +57,7 @@ class Assembly:
             self.cubes[id] = Cube(
                 id, np.array([id * 0.12, 0.0, 0.06]), np.array([0.0, 0.0, 0.0, 1.0]))
             self.cubes[id].set_cube_type('active_6_passive_0')
+        self.change_modules_to_networkx()
 
     def create_tower_assembly(self) -> None:
         """Create an assembly of cubes arranged in a tower."""
@@ -60,6 +65,7 @@ class Assembly:
             self.cubes[id] = Cube(id, np.array(
                 [0.0, 0.0, self.m_size/2 + id*self.m_size]), np.array([0.0, 0.0, 0.0, 1.0]))
             self.cubes[id].set_cube_type('active_6_passive_0')
+        self.change_modules_to_networkx()
 
     def create_grid_assembly(self) -> None:
         """Create an assembly of cubes arranged in a grid."""
@@ -75,6 +81,7 @@ class Assembly:
                 )
                 self.cubes[i * grid_x + j].set_cube_type(
                     'active_6_passive_0')
+        self.change_modules_to_networkx()
 
     def find_factors(self, n: int) -> list[list[int]]:
         """Return a list of factors of n.
@@ -107,23 +114,80 @@ class Assembly:
                         attitude=np.array([0.0, 0.0, 0.0, 1.0])
                     )
                     self.cubes[cube_id].set_cube_type('active_6_passive_0')
+        self.change_modules_to_networkx()
 
-    # def change_cubes_to_network(self) -> None:
-    #     """create networkx graph from cubes"""
-    #     pass
-    #     # TODO: create networkx graph from cubes
-    #     self.asm_graph.clear()
-    #     for cube in self.cubes.values():
-    #         self.asm_graph.add_node(cube.cube_id, pos=cube.pos)
+    def change_modules_to_networkx(self) -> None:
+        """Create networkx graph from cubes."""
+        self.asm_graph.clear()
+        for cube in self.cubes.values():
+            self.asm_graph.add_node(cube.cube_id, pos=cube.pos)
+        # if all cubes are active_6_passive_0, connect all cubes
+        if self.mode == "all_connector_active":
+            for cube in self.cubes.values():
+                for direction in self.unit_vectors:
+                    # near_posは0.06の倍数の位置になる
+                    near_pos = cube.pos + direction * self.m_size
+                    near_pos = np.round(near_pos / 0.06) * 0.06
+                    near_cube_id = self.get_cube_id_by_pos(near_pos)
+                    if near_cube_id is not None:
+                        self.asm_graph.add_edge(cube.cube_id, near_cube_id)
+        # Need to implement other cube types
+        else:
+            print("Not implemented yet")
+
+    def update_networkx_remove_node(self, cube_id: int) -> None:
+        """Update networkx graph when a cube is removed.
+
+        Args:
+            cube_id (int): The ID of the cube that is removed.
+        """
+        self.asm_graph.remove_node(cube_id)
+        if self.mode == "all_connector_active":
+            pass
+        else:
+            self.asm_graph.remove_edges_from(
+                list(self.asm_graph.edges(cube_id)))
+            print("Not implemented yet")
+
+    def update_networkx_add_node(self, cube_id: int, pos: npt.NDArray) -> None:
+        """Update networkx graph when a cube is moved.
+
+        Args:
+            cube_id (int): The ID of the cube that is moved.
+            pos (np.array): The new position of the cube.
+        """
+        self.asm_graph.add_node(cube_id, pos=pos)
+        if self.mode == "all_connector_active":
+            for direction in self.unit_vectors:
+                near_pos = pos + direction * self.m_size
+                near_pos = np.round(near_pos / 0.06) * 0.06
+                near_cube_id = self.get_cube_id_by_pos(near_pos)
+                if near_cube_id is not None:
+                    self.asm_graph.add_edge(cube_id, near_cube_id)
+        else:
+            print("Not implemented yet")
+
+    def check_connectivity(self) -> bool:
+        """Check if the assembly is connected.
+        Need to update networkx graph before calling this method.
+
+        Returns:
+            bool: True if the assembly is connected, False otherwise.
+        """
+        if self.mode == "all_connector_active":
+            return nx.is_connected(self.asm_graph)
+        else:
+            print("Not implemented yet")
+            return False
 
     def get_outermost_cube_ids(self, cube_ids: Optional[list[int]] = None) -> list[int]:
         """Get the IDs of the outermost cubes in the assembly.
 
         Args:
-          cube_ids (list[int], optional): List of cube IDs to check. Defaults to None.
+            cube_ids (list[int], optional): List of cube IDs to check. Defaults to None.
 
         Returns:
-          list: A list of IDs of the outermost cubes.
+            list: A list of IDs of the outermost cubes.
         """
         if cube_ids is None:
             cube_ids = list(self.cubes.keys())
@@ -131,17 +195,6 @@ class Assembly:
         outermost_cube_ids: list[int] = []
         cube_positions: set[tuple] = {
             tuple(cube.pos) for cube in self.cubes.values()}
-        # for cube_id in cube_ids:
-        #     cube = self.cubes[cube_id]
-        #     is_outermost: bool = False
-        #     for direction in self.unit_vectors:
-        #         pos_near_asm_possible = tuple(
-        #             cube.pos + direction * self.m_size)
-        #         if pos_near_asm_possible not in cube_positions:
-        #             is_outermost = True
-        #             break
-        #     if is_outermost:
-        #         outermost_cube_ids.append(cube_id)
         for cube_id in cube_ids:
             cube = self.cubes[cube_id]
             is_outermost: bool = any(
@@ -268,6 +321,6 @@ class Assembly:
 
 
 if __name__ == '__main__':
-    assembly = Assembly(num_cubes=27)
+    assembly = Assembly(num_cubes=27, mode="all_connector_active")
     assembly.create_cubic_assembly()
     print("Assembly main")

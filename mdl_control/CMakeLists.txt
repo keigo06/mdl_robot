@@ -46,6 +46,7 @@ install(
     scripts/cube_visualizer.py
     scripts/simple_cube_publisher.py
     scripts/publisher_member_function.py
+    scripts/custom_logger.py
 
   DESTINATION
     lib/${PROJECT_NAME}

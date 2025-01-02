@@ -90,7 +90,15 @@ class TransitionState:
             id_list_reachable)
         logger.debug(f"id_list_outmost_in_reachable: {id_list_outmost}")
         logger.debug(f"num_of_id_list_outmost: {len(id_list_outmost)}")
-        # TODO: Check connectivity
+
+        id_list_outmost_copy = id_list_outmost[:]
+        for cube_id in id_list_outmost_copy:
+            asm_eliminate = copy.deepcopy(self.asm)
+            asm_eliminate.cubes.pop(cube_id)
+            asm_eliminate.update_networkx_remove_node(cube_id)
+            if not asm_eliminate.check_connectivity():
+                id_list_outmost.remove(cube_id)
+
         # TODO: Check robot IK
         return id_list_outmost
 
@@ -103,7 +111,6 @@ class TransitionState:
             id_list_reachable)
         logger.debug(f"pos_list_add_in_reachable: {pos_list_add}")
         logger.debug(f"num_of_pos_list_add: {len(pos_list_add)}")
-        # TODO: Check connectivity
         # TODO: Check connector direction and type by using id
         # TODO: Check robot IK
         return pos_list_add
@@ -147,6 +154,7 @@ class TransitionState:
     def eliminate_module(self, id):
         asm_eliminate = copy.deepcopy(self.asm)
         asm_eliminate.cubes.pop(id)
+        asm_eliminate.update_networkx_remove_node(id)
         asm_eliminate.robot_base_pos = self.asm.cubes[id].pos
         return asm_eliminate
 
@@ -154,6 +162,7 @@ class TransitionState:
         asm_add = copy.deepcopy(asm_eliminate)
         asm_add.cubes[id] = copy.deepcopy(self.asm.cubes[id])
         asm_add.cubes[id].pos = pos
+        asm_add.update_networkx_add_node(id, pos)
         asm_add.robot_base_pos = pos
         return asm_add
 
@@ -172,7 +181,7 @@ class TransitionState:
 
 
 if __name__ == "__main__":
-    asm_first = Assembly(num_cubes=27)
+    asm_first = Assembly(num_cubes=27, mode="all_connector_active")
     asm_first.create_cubic_assembly()
     state = TransitionState(asm_first)
     id_list_eliminate_modules = state.get_able_eliminate_modules_id()

@@ -7,7 +7,7 @@ import numpy as np
 
 
 def test_create_cubic_assembly():
-    assembly = Assembly(num_cubes=27)
+    assembly = Assembly(num_cubes=27, mode="all_connector_active")
     assembly.create_cubic_assembly()
     assert len(assembly.cubes) == 27
     positions = [tuple(cube.pos) for cube in assembly.cubes.values()]
@@ -19,7 +19,7 @@ def test_create_cubic_assembly():
 
 
 def test_get_outermost_cube_ids_cubic_assembly():
-    assembly = Assembly(num_cubes=27)
+    assembly = Assembly(num_cubes=27, mode="all_connector_active")
     assembly.create_cubic_assembly()
     outermost_ids = assembly.get_outermost_cube_ids()
     expected_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,

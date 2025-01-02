@@ -16,7 +16,7 @@ def test_get_able_eliminate_modules_id():
         - 外側のモジュールのIDを取得する: get_frontier_module_ids
         - 削除したときのネットワークの連結性を確認する: check_connectivity
     """
-    asm_first = Assembly(num_cubes=27)
+    asm_first = Assembly(num_cubes=27, mode="all_connector_active")
     asm_first.create_cubic_assembly()
     state = TransitionState(asm_first)
     assert np.array_equal(state.asm.robot_base_pos, np.array([0, 0, 0]))
@@ -32,7 +32,7 @@ def test_get_able_add_modules_pos():
         - 位置が重なっているか確認する: is_pos_free
     - update_graph
     """
-    asm_first = Assembly(num_cubes=27)
+    asm_first = Assembly(num_cubes=27, mode="all_connector_active")
     asm_first.create_cubic_assembly()
     state = TransitionState(asm_first)
     id_list_eliminate_modules = state.get_able_eliminate_modules_id()

@@ -34,10 +34,11 @@ class Planner:
     def __init__(self) -> None:
         """ Planner Class
         """
-        self.asm_first = Assembly(num_cubes=27)
+        self.mode = "all_connector_active"
+        self.asm_first = Assembly(num_cubes=27, mode=self.mode)
         self.asm_first.create_cubic_assembly()
 
-        self.asm_purpose = Assembly(num_cubes=27)
+        self.asm_purpose = Assembly(num_cubes=27, mode=self.mode)
         self.asm_purpose.create_tower_assembly()
 
         if len(self.asm_first.cubes) != len(self.asm_purpose.cubes):
@@ -49,7 +50,7 @@ class Planner:
         # Heuristic type: manhattan or euclidean
         self.cost_calculation_type: Optional[str] = None
         self.cost_round_size: Optional[int] = None
-        self.weight_heuristic: float = 1.0
+        self.weight_heuristic: float = 10.0
 
     def get_heuristec(self, asm_current: Assembly) -> float:
         """
