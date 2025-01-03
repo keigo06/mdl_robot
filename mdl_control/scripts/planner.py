@@ -9,7 +9,7 @@ import numpy.typing as npt
 from typing import Optional, Any
 from scipy.optimize import linear_sum_assignment
 from heapq import heappush, heappop
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import time
 import csv
 
@@ -190,9 +190,9 @@ class Planner:
                     f"search count: {search_count}, num_of_action_count_list: {len(action_count_list)}")
                 if logger.level == DEBUG:
                     current_state.asm.print_asm()
-                    self.custom_logger.save_cost_function(
-                        current_state.score, current_state.cost, current_state.heuristic)
-                    self.custom_logger.show_plot()
+                    # self.custom_logger.save_cost_function(
+                    #     current_state.score, current_state.cost, current_state.heuristic)
+                    # self.custom_logger.show_plot()
 
             if self.is_done(current_state):
                 end_state = current_state
