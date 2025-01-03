@@ -9,6 +9,7 @@ import numpy.typing as npt
 from typing import Optional, Any
 from scipy.optimize import linear_sum_assignment
 from heapq import heappush, heappop
+import matplotlib.pyplot as plt
 import time
 import csv
 
@@ -36,10 +37,10 @@ class Planner:
         """ Planner Class
         """
         self.mode = "all_connector_active"
-        self.asm_first = Assembly(num_cubes=27, mode=self.mode)
+        self.asm_first = Assembly(num_cubes=8, mode=self.mode)
         self.asm_first.create_cubic_assembly()
 
-        self.asm_purpose = Assembly(num_cubes=27, mode=self.mode)
+        self.asm_purpose = Assembly(num_cubes=8, mode=self.mode)
         self.asm_purpose.create_tower_assembly()
 
         if len(self.asm_first.cubes) != len(self.asm_purpose.cubes):
@@ -172,6 +173,9 @@ class Planner:
         heappush(open_list, initial_state)
         logger.info("A star start")
 
+        if logger.level == DEBUG:
+            self.custom_logger.start("planning_all")
+
         start = time.time()
         search_count: int = 0
         action_count_list: list[int] = []
@@ -186,6 +190,10 @@ class Planner:
                     f"search count: {search_count}, num_of_action_count_list: {len(action_count_list)}")
                 if logger.level == DEBUG:
                     current_state.asm.print_asm()
+                    self.custom_logger.save_cost_function(
+                        current_state.score, current_state.cost, current_state.heuristic)
+                    self.custom_logger.show_plot()
+
             if self.is_done(current_state):
                 end_state = current_state
                 logger.info("End state found")
